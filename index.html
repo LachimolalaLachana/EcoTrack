@@ -34,7 +34,7 @@
         
         /* SPLASH */
         #splash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #1a5f4a, #2d8a6e); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10000; transition: opacity 0.5s, visibility 0.5s; }
-        #splash.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+        #splash.hidden { opacity: 0; visibility: hidden; }
         .splash-logo { width: 120px; height: 120px; animation: pulse 2s ease-in-out infinite; }
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
         .splash-text { color: white; font-size: 2rem; font-weight: 700; margin-top: 20px; }
@@ -72,7 +72,12 @@
         .btn-secondary { background: var(--border); color: var(--text); font-weight: 600; }
         .btn-green { background: var(--sage); color: white; box-shadow: 0 8px 20px rgba(45, 138, 110, 0.3); }
         
-        /* STATS */
+        /* AUTH TABS */
+        .auth-tabs { display: flex; background: var(--border); border-radius: 16px; padding: 4px; margin-bottom: 20px; }
+        .auth-tab { flex: 1; padding: 12px; text-align: center; font-weight: 700; color: var(--muted); cursor: pointer; border-radius: 12px; transition: all 0.3s; }
+        .auth-tab.active { background: var(--card); color: var(--sage); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+
+        /* STATS (Scrollable for Home) */
         .stats-row { display: flex; overflow-x: auto; gap: 15px; margin-top: 24px; padding-bottom: 10px; scroll-snap-type: x mandatory; }
         .stats-row::-webkit-scrollbar { height: 4px; }
         .stats-row::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
@@ -86,15 +91,13 @@
         .chip:hover { transform: translateY(-2px); border-color: var(--sage); color: var(--sage); }
         .chip.active-chatarra { background: var(--sage); color: white; border-color: var(--sage); }
         
-        /* TIMELINE */
+        /* TIMELINE & FEED */
         .timeline { position: relative; padding-left: 24px; }
         .timeline::before { content: ''; position: absolute; left: 8px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, var(--sage), transparent); }
-        #timeline-history { max-height: 300px; overflow-y: auto; padding-right: 12px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
-        #timeline-history::-webkit-scrollbar { width: 6px; }
-        #timeline-history::-webkit-scrollbar-track { background: transparent; }
-        #timeline-history::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
-        #timeline-history::-webkit-scrollbar-thumb:hover { background: var(--sage); }
+        #timeline-history, #feed-container { max-height: 400px; overflow-y: auto; padding-right: 12px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
         .entry { position: relative; margin-bottom: 16px; padding: 16px; background: var(--card); border-radius: 16px; border: 1px solid var(--border); box-shadow: var(--shadow); transition: transform 0.2s; }
+        .entry.censored { background: repeating-linear-gradient(45deg, var(--card), var(--card) 10px, rgba(168, 230, 207, 0.05) 10px, rgba(168, 230, 207, 0.05) 20px); border: 1px dashed var(--muted); opacity: 0.9;}
+        .entry.censored .blur-text { filter: blur(4px); user-select: none; pointer-events: none; }
         .entry:hover { transform: translateX(4px); }
         .entry::before { content: ''; position: absolute; left: -20px; top: 20px; width: 12px; height: 12px; background: var(--bg); border: 3px solid var(--sage); border-radius: 50%; }
         .entry-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; padding-right: 24px; }
@@ -102,6 +105,7 @@
         .entry-amt { font-size: 1.1rem; font-weight: 800; color: var(--accent); }
         .entry-date { font-size: 0.8rem; color: var(--muted); font-weight: 500;}
         .entry-note { font-style: italic; color: var(--text); font-size: 0.9rem; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); }
+        .feed-author { display: flex; align-items: center; gap: 8px; font-weight: bold; color: var(--accent); margin-bottom: 12px; font-size: 0.9rem; border-bottom: 1px solid var(--border); padding-bottom: 8px;}
         
         /* DATOS MAMONES (COLATERAL) */
         .impact-msg { background: rgba(45, 138, 110, 0.08); border-left: 3px solid var(--sage); padding: 10px 12px; margin-top: 12px; border-radius: 4px 10px 10px 4px; font-size: 0.85rem; color: var(--text); display: flex; gap: 10px; align-items: flex-start; line-height: 1.4; }
@@ -109,6 +113,11 @@
         .colateral-msg { margin-top: 6px; font-size: 0.8rem; color: var(--accent); font-weight: 600; display: block; }
         .delete-btn { position: absolute; top: 16px; right: 16px; background: none; border: none; color: var(--muted); cursor: pointer; font-size: 1.2rem; transition: color 0.2s; }
         .delete-btn:hover { color: var(--accent); }
+
+        /* PHOTO PREVIEW */
+        .photo-box { border: 2px dashed var(--border); padding: 20px; text-align: center; border-radius: 12px; cursor: pointer; display: block; transition: border-color 0.2s; }
+        .photo-box:hover { border-color: var(--sage); background: rgba(45, 138, 110, 0.05); }
+        .photo-preview { display: none; width: 100%; max-height: 200px; border-radius: 12px; margin-top: 10px; object-fit: cover; }
 
         /* NAVIGATION */
         .bottom-nav { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; padding: 10px; background: var(--card); border-radius: 50px; border: 1px solid var(--border); box-shadow: 0 10px 40px rgba(0,0,0,0.15); backdrop-filter: blur(20px); z-index: 100; width: 90%; max-width: 400px; justify-content: space-between; }
@@ -129,7 +138,11 @@
         .datetime-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .privacy-btns { display: flex; gap: 8px; flex-wrap: wrap; }
         .priv-btn { flex: 1; min-width: 90px; padding: 10px; border-radius: 12px; border: 2px solid var(--border); background: transparent; cursor: pointer; font-size: 0.9rem; font-weight: 700; color: var(--text); transition: all 0.2s; }
-        .priv-btn.active { background: var(--sage); color: white; border-color: var(--sage); box-shadow: 0 4px 10px rgba(45,138,110,0.2); }
+        
+        /* PRIVACY STYLES */
+        .priv-btn.pub.active { background: var(--sage); color: white; border-color: var(--sage); }
+        .priv-btn.cen.active { background: var(--amber); color: #000; border-color: var(--amber); }
+        .priv-btn.pri.active { background: var(--accent); color: white; border-color: var(--accent); }
         
         .toggle-row { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 1px solid var(--border); }
         .toggle { width: 50px; height: 26px; background: var(--border); border-radius: 13px; position: relative; cursor: pointer; transition: background 0.3s; }
@@ -141,16 +154,14 @@
         .empty-state { text-align: center; padding: 40px 20px; color: var(--muted); }
         .chatarra-section { display: none; margin-top: 16px; padding: 16px; background: rgba(232,93,78,0.05); border-radius: 16px; }
         .chatarra-section.active { display: block; }
-        .modal-content::-webkit-scrollbar { width: 6px; }
-        .modal-content::-webkit-scrollbar-track { background: transparent; }
-        .modal-content::-webkit-scrollbar-thumb { background: var(--muted); border-radius: 10px; }
-        .connection-status { text-align: center; font-size: 0.8rem; padding: 4px; border-radius: 8px; margin-bottom: 16px; font-weight: 600;}
-        .status-cloud { background: rgba(95,201,168,0.2); color: var(--sage); }
-        .status-local { background: rgba(232,93,78,0.2); color: var(--accent); }
+        
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--muted); border-radius: 10px; }
     </style>
 </head>
 <body>
-    <!-- SPLASH (A PRUEBA DE FALLOS) -->
+    <!-- SPLASH -->
     <div id="splash">
         <div class="splash-logo">
             <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -161,29 +172,38 @@
             </svg>
         </div>
         <div class="splash-text">EcoTrack Pro</div>
-        <div style="color: rgba(255,255,255,0.7); margin-top: 10px; font-size: 0.9rem;">Conectando motor Híbrido...</div>
     </div>
 
-    <!-- AUTH (PERFIL HÍBRIDO) -->
+    <!-- AUTH: REGISTRO / LOGIN -->
     <div id="screen-auth" class="app-container hidden">
         <div style="min-height: 80vh; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-            <div style="width: 100px; height: 100px; margin-bottom: 24px;">
+            <div style="width: 80px; height: 80px; margin-bottom: 20px;">
                 <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="#1a5f4a"/><path d="M50 20 C30 20 20 40 20 50 C20 70 35 85 50 85 C65 85 80 70 80 50 C80 40 70 20 50 20 Z" fill="#2d8a6e"/><path d="M50 30 C38 30 32 42 32 50 C32 62 40 72 50 72 C60 72 68 62 68 50 C68 42 62 30 50 30 Z" fill="#5fc9a8"/><path d="M50 35 Q45 50 50 70 Q55 50 50 35" fill="#a8e6cf"/></svg>
             </div>
-            <h1 style="margin-bottom: 8px;">Crea tu Perfil</h1>
-            <div id="auth-status" class="connection-status status-local" style="width:100%; max-width:400px;">Verificando servidor...</div>
-            <p style="margin-bottom: 32px; text-align:center;">Para guardar tus registros de Ingeniería Ambiental, necesitamos registrarte.</p>
+            <h1 style="margin-bottom: 8px;">Bitácora Ambiental</h1>
+            <p id="cloud-status" style="margin-bottom: 24px; text-align:center; color: var(--sage); font-weight: bold; font-size: 0.9rem;">Sincronización en la Nube Activada</p>
             
             <div class="card" style="width: 100%; max-width: 400px;">
-                <div class="form-group">
+                <div class="auth-tabs">
+                    <div class="auth-tab active" id="tab-login" onclick="toggleAuthMode('login')">Iniciar Sesión</div>
+                    <div class="auth-tab" id="tab-register" onclick="toggleAuthMode('register')">Registrarse</div>
+                </div>
+
+                <div class="form-group hidden" id="group-name">
                     <label>¿Cómo te llamas?</label>
                     <input type="text" id="input-name" placeholder="Tu nombre o apodo">
                 </div>
                 <div class="form-group">
-                    <label>Correo (opcional)</label>
+                    <label>Correo electrónico</label>
                     <input type="email" id="input-email" placeholder="email@ejemplo.com">
                 </div>
-                <button class="btn btn-primary" onclick="login()">Guardar Perfil y Entrar →</button>
+                <div class="form-group">
+                    <label>Contraseña</label>
+                    <input type="password" id="input-pwd" placeholder="Mínimo 6 caracteres">
+                </div>
+                
+                <button class="btn btn-primary" id="btn-auth" onclick="handleAuth()">Ingresar →</button>
+                <div id="auth-error" style="color: var(--accent); font-size: 0.85rem; margin-top: 10px; text-align: center; font-weight: bold;"></div>
             </div>
         </div>
     </div>
@@ -195,7 +215,7 @@
             <div class="logo-icon">
                 <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="#1a5f4a"/><path d="M50 20 C30 20 20 40 20 50 C20 70 35 85 50 85 C65 85 80 70 80 50 C80 40 70 20 50 20 Z" fill="#2d8a6e"/><path d="M50 30 C38 30 32 42 32 50 C32 62 40 72 50 72 C60 72 68 62 68 50 C68 42 62 30 50 30 Z" fill="#5fc9a8"/><path d="M50 35 Q45 50 50 70 Q55 50 50 35" fill="#a8e6cf"/></svg>
             </div>
-            <div class="logo-text">EcoTrack <span id="cloud-icon" title="Modo Local">💾</span></div>
+            <div class="logo-text">EcoTrack ☁️</div>
             <div class="header-actions">
                 <button class="icon-btn" onclick="toggleTheme()" title="Cambiar Tema">
                     <svg id="icon-theme" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-3.03 0-5.5-2.47-5.5-5.5 0-1.82.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/></svg>
@@ -240,7 +260,7 @@
             </div>
 
             <div class="card" style="margin-bottom: 0;">
-                <h3 style="margin-bottom: 16px;">📝 Últimos registros</h3>
+                <h3 style="margin-bottom: 16px;">📝 Mis últimos registros</h3>
                 <div class="timeline" id="timeline-home">
                     <!-- Dinámico -->
                 </div>
@@ -249,8 +269,16 @@
 
         <!-- SCREEN: HISTORY -->
         <div id="page-history" class="app-container hidden" style="padding-top:0;">
+            
+            <div class="card card-hero" style="background: linear-gradient(135deg, var(--text-light), var(--sage));">
+                <h2 style="color: white; margin-bottom: 16px; text-align: center;">📈 Tendencia Semanal</h2>
+                <div style="width: 100%; height: 250px;">
+                    <canvas id="history-chart"></canvas>
+                </div>
+            </div>
+
             <div class="card">
-                <h3 style="margin-bottom: 16px;">📤 Exportar Reportes (Ing. Ambiental)</h3>
+                <h3 style="margin-bottom: 16px;">📤 Exportar Mi Reporte</h3>
                 <p style="margin-bottom: 16px; color: var(--muted); font-size: 0.9rem;">Tus datos contienen las unidades de medida reales y los análisis colaterales:</p>
                 <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
                     <button class="btn btn-green" onclick="exportData('excel')">📊 Excel (XLSX)</button>
@@ -261,7 +289,7 @@
             </div>
 
             <div class="card" style="margin-bottom: 0;">
-                <h3 style="margin-bottom: 16px;">📚 Historial completo (Scroll Seguro)</h3>
+                <h3 style="margin-bottom: 16px;">📚 Mi Historial Completo</h3>
                 <div class="timeline" id="timeline-history">
                     <!-- Historial con límite de altura -->
                 </div>
@@ -310,25 +338,34 @@
             </div>
 
             <div class="card">
-                <h3 style="margin-bottom: 16px; text-align: center;">🥧 Eventos por Categoría</h3>
+                <h3 style="margin-bottom: 16px; text-align: center;">🥧 Mis Eventos por Categoría</h3>
                 <div style="max-width: 300px; margin: 0 auto;">
                     <canvas id="stats-chart" height="300"></canvas>
                 </div>
             </div>
         </div>
 
-        <!-- SCREEN: GROUPS (MULTIJUGADOR) -->
+        <!-- SCREEN: GROUPS & FEED (EL ESPIONAJE) -->
         <div id="page-groups" class="app-container hidden" style="padding-top:0;">
             <div class="card card-hero">
-                <h2 style="color:white; margin-bottom:16px;">👥 Redes de Ingeniería</h2>
-                <p style="color:rgba(255,255,255,0.9); margin-bottom: 16px; font-size: 0.9rem;">Tus grupos se sincronizan si hay conexión.</p>
+                <h2 style="color:white; margin-bottom:8px;">👥 Redes de Ingeniería</h2>
+                <p style="color:rgba(255,255,255,0.9); margin-bottom: 16px; font-size: 0.9rem;">Únete a redes para ver la actividad de tus colegas.</p>
                 <div style="display:flex; gap:10px;">
                     <button class="btn btn-primary" style="flex:1; background:white; color:var(--text);" onclick="createGroup()">+ Crear Red</button>
                     <button class="btn btn-secondary" style="flex:1; border:1px solid white; color:white; background:transparent;" onclick="joinGroup()">🔗 Unirse</button>
                 </div>
             </div>
-            <div id="groups-container">
-                <!-- Dinámico -->
+            
+            <div id="groups-container" style="margin-bottom: 24px;">
+                <!-- Mis Grupos Renderizados -->
+            </div>
+
+            <div class="card" style="margin-bottom: 0;">
+                <h3 style="margin-bottom: 16px;">🌐 Feed de la Red (Muro)</h3>
+                <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 16px;">Aquí verás lo que publican los miembros de tus redes. Los detalles dependerán de su configuración de privacidad.</p>
+                <div class="timeline" id="feed-container">
+                    <!-- Feed Global de los miembros -->
+                </div>
             </div>
         </div>
 
@@ -340,7 +377,7 @@
             </button>
             <button class="nav-btn" onclick="navigateTo('history')" id="nav-history">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                Historial
+                Mi Historial
             </button>
             <button class="nav-btn" onclick="navigateTo('stats')" id="nav-stats">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
@@ -353,7 +390,7 @@
         </nav>
     </div>
 
-    <!-- MODAL ENTRY CON OVERRIDE DINÁMICO Y FOTO -->
+    <!-- MODAL ENTRY -->
     <div class="modal-overlay" id="modal-entry" onclick="if(event.target===this) closeEntry()">
         <div class="modal-content">
             <div class="modal-header">
@@ -388,7 +425,7 @@
             <div class="form-group" style="padding: 12px; background: rgba(95,201,168,0.15); border-radius: 12px; border: 1px dashed var(--sage);">
                 <label id="override-label" style="color: var(--sage); margin-bottom: 4px;">💡 Impacto Calculado <small style="font-weight:normal;">[Editable]</small></label>
                 <input type="number" id="entry-carbon-override" step="0.001" min="0" style="background: var(--card); border-color: var(--sage);">
-                <span class="helper-text" style="color: var(--sage);">Calculado en tiempo real. Cámbialo si tienes el dato exacto de impacto.</span>
+                <span class="helper-text" style="color: var(--sage);">Calculado en tiempo real, pero puedes modificar el valor exacto.</span>
             </div>
 
             <div class="chatarra-section" id="chatarra-box">
@@ -416,11 +453,12 @@
             </div>
 
             <div class="form-group">
-                <label>🔒 Visibilidad</label>
+                <label>👀 Privacidad (Para el Feed de tus Grupos)</label>
+                <p style="font-size: 0.8rem; color: var(--muted); margin-bottom: 8px;">Elige cómo te ven en la red.</p>
                 <div class="privacy-btns">
-                    <button class="priv-btn active" onclick="setPrivacy('public')" id="btn-pub">🌐 Público</button>
-                    <button class="priv-btn" onclick="setPrivacy('friends')" id="btn-friend">👥 Amigos</button>
-                    <button class="priv-btn" onclick="setPrivacy('private')" id="btn-priv">🔒 Privado</button>
+                    <button class="priv-btn pub active" onclick="setPrivacy('public')" id="btn-pub">🌐 Público<br><span style="font-size:0.65rem; font-weight:normal;">(Visible todo)</span></button>
+                    <button class="priv-btn cen" onclick="setPrivacy('friends')" id="btn-friend">🔒 Censurado<br><span style="font-size:0.65rem; font-weight:normal;">(Ocultar datos)</span></button>
+                    <button class="priv-btn pri" onclick="setPrivacy('private')" id="btn-priv">👻 Privado<br><span style="font-size:0.65rem; font-weight:normal;">(Solo yo)</span></button>
                 </div>
             </div>
 
@@ -442,22 +480,49 @@
                 <span style="font-weight: 600;">🌙 Modo oscuro</span>
                 <div class="toggle" id="toggle-theme" onclick="toggleTheme()"></div>
             </div>
-            <button class="btn mt" onclick="clearData()" style="background: rgba(232,93,78,0.1); color: var(--accent); border: 1px solid var(--accent);">
-                🗑️ Borrar cuenta y mis datos
+            
+            <button class="btn btn-secondary mt" onclick="logoutUser()" style="margin-top: 20px; font-weight: bold;">
+                Cerrar Sesión
+            </button>
+
+            <button class="btn mt" onclick="clearData()" style="background: rgba(232,93,78,0.1); color: var(--accent); border: 1px solid var(--accent); margin-top: 15px;">
+                🗑️ Borrar todos mis datos
             </button>
         </div>
     </div>
 
-    <!-- SCRIPT HÍBRIDO (LOCAL / NUBE) -->
+    <!-- SCRIPT TIPO MÓDULO PARA FIREBASE V11 -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, collection, getDocs, onSnapshot, addDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Global State (Se exporta a window para el HTML inline)
-        window.state = { user: null, entries: [], currentCat: null, privacy: 'public', theme: 'light', chatarra: [], groups: [] };
+        window.state = { user: null, entries: [], feedEntries: [], currentCat: null, privacy: 'public', theme: 'light', chatarra: [], groups: [], authMode: 'login' };
 
-        // Constantes Categorías
+        // [FIREBASE SETUP]
+        const dummyFirebaseConfig = {
+            apiKey: "TU_API_KEY",
+            authDomain: "tu-proyecto.firebaseapp.com",
+            projectId: "tu-proyecto",
+            storageBucket: "tu-proyecto.appspot.com",
+            messagingSenderId: "12345678",
+            appId: "1:12345678:web:abcde"
+        };
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : dummyFirebaseConfig;
+        
+        let app, auth, db;
+        try {
+            app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+        } catch(e) {
+            console.warn("Configuración de Firebase no válida. Entrando en Modo Offline.");
+        }
+
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        let currentUser = null;
+        let listenersUnsubscribe = [];
+
         const svgs = {
             agua: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>`,
             energia: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`,
@@ -482,159 +547,168 @@
             otros: { icon: svgs.otros, label: 'Otros', unit: 'uds', impUnit: 'Valor Mixto', hint: 'Servicios o items misceláneos', subs: ['Limpieza hogar', 'Cosméticos', 'Mascotas', 'Papelería', 'Otro'], factor: 1 }
         };
 
-        let chartHistoryObj = null, chartStatsObj = null;
-        let useCloud = false;
-        let db, auth, currentUser;
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'ecotrack-app-123';
+        let chartHistoryObj = null; let chartStatsObj = null;
 
-        // ELIMINADOR DE PANTALLA DE CARGA (A prueba de fallos)
-        setTimeout(() => { document.getElementById('splash').classList.add('hidden'); }, 1500);
+        // INICIALIZACIÓN DIRECTA
+        renderCategoryChips();
+        if (localStorage.getItem('ecotrack_theme') === 'dark') applyDarkThemeUI();
+        setTimeout(() => { document.getElementById('splash').classList.add('hidden'); }, 800);
+        document.getElementById('entry-amt').addEventListener('input', calculateLiveImpact);
 
-        window.onload = async () => {
-            renderCategoryChips();
-            const savedTheme = localStorage.getItem('ecotrack_theme');
-            if (savedTheme === 'dark') applyDarkThemeUI();
+        function fallbackLocalMode() {
+            document.getElementById('cloud-status').innerHTML = "⚠️ MODO LOCAL ACTIVO (Datos solo en este dispositivo)";
+            document.getElementById('screen-auth').classList.remove('hidden');
+            document.getElementById('screen-auth').classList.add('active');
+        }
 
-            document.getElementById('entry-amt').addEventListener('input', calculateLiveImpact);
-
-            // INTENTO DE CONEXIÓN A LA NUBE
+        // AUTH & INICIO
+        const initAuth = async () => {
+            if(!auth) return fallbackLocalMode();
             try {
-                if (typeof __firebase_config !== 'undefined' && __firebase_config) {
-                    const firebaseConfig = JSON.parse(__firebase_config);
-                    const app = initializeApp(firebaseConfig);
-                    auth = getAuth(app);
-                    db = getFirestore(app);
-                    useCloud = true;
-                    document.getElementById('cloud-icon').textContent = '☁️';
-                    document.getElementById('cloud-icon').title = 'Modo Nube (Firebase)';
-                    document.getElementById('auth-status').textContent = 'Servidor conectado';
-                    document.getElementById('auth-status').className = 'connection-status status-cloud';
-                    
-                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                        await signInWithCustomToken(auth, __initial_auth_token);
-                    } else {
-                        await signInAnonymously(auth);
-                    }
-
-                    onAuthStateChanged(auth, async (user) => {
-                        if (user) {
-                            currentUser = user;
-                            const profileRef = doc(db, 'artifacts', appId, 'users', user.uid, 'profile', 'info');
-                            const profileSnap = await getDoc(profileRef);
-
-                            if (profileSnap.exists()) {
-                                window.state.user = profileSnap.data();
-                                showMain();
-                                startRealtimeListeners();
-                            } else {
-                                document.getElementById('screen-auth').classList.remove('hidden');
-                                document.getElementById('screen-auth').classList.add('active');
-                            }
-                        }
-                    });
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
                 } else {
-                    throw new Error("No config");
+                    // Esperar a que el usuario decida ingresar (sin forzar Anónimo de golpe para el login manual)
+                    // Si el onAuthStateChanged detecta sesión activa, entrará solo.
                 }
-            } catch(e) {
-                // FALLBACK LOCAL (Cuando abres el archivo en C:/)
-                useCloud = false;
-                document.getElementById('cloud-icon').textContent = '💾';
-                document.getElementById('cloud-icon').title = 'Modo Local (Sin Nube)';
-                document.getElementById('auth-status').textContent = 'Modo Local Activado (C:/)';
-                document.getElementById('auth-status').className = 'connection-status status-local';
+            } catch (e) { fallbackLocalMode(); }
+        };
+        initAuth();
 
-                const saved = localStorage.getItem('ecotrack_pro_v8');
-                if (saved) {
-                    window.state = JSON.parse(saved);
-                    if (window.state.user) {
-                        showMain();
-                        updateAllUI();
-                    } else {
-                        document.getElementById('screen-auth').classList.remove('hidden');
-                        document.getElementById('screen-auth').classList.add('active');
-                    }
+        if(auth) {
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    currentUser = user;
+                    try {
+                        const profileSnap = await getDoc(doc(db, 'artifacts', appId, 'users', user.uid, 'profile', 'info'));
+                        if (profileSnap.exists()) {
+                            window.state.user = profileSnap.data();
+                            document.getElementById('screen-auth').classList.add('hidden');
+                            document.getElementById('app-main').classList.remove('hidden');
+                            document.getElementById('user-name').textContent = window.state.user.name;
+                            startRealtimeListeners();
+                        } else {
+                            // Usuario existe (quizá por customToken) pero no tiene perfil
+                            document.getElementById('screen-auth').classList.remove('hidden');
+                            document.getElementById('screen-auth').classList.add('active');
+                        }
+                    } catch(e) { fallbackLocalMode(); }
                 } else {
+                    currentUser = null;
+                    clearListeners();
+                    document.getElementById('app-main').classList.add('hidden');
                     document.getElementById('screen-auth').classList.remove('hidden');
                     document.getElementById('screen-auth').classList.add('active');
                 }
-            }
-        };
-
-        function renderCategoryChips() {
-            document.getElementById('home-category-chips').innerHTML = Object.keys(cats).map(key => `
-                <div class="chip" onclick="openEntry('${key}')">${cats[key].icon} ${cats[key].label}</div>
-            `).join('');
+            });
+        } else {
+            fallbackLocalMode();
         }
 
-        // LISTENERS CLOUD
-        function startRealtimeListeners() {
-            if (!useCloud || !currentUser) return;
-            const entriesRef = collection(db, 'artifacts', appId, 'users', currentUser.uid, 'entries');
-            onSnapshot(entriesRef, (snapshot) => {
-                window.state.entries = [];
-                snapshot.forEach(d => window.state.entries.push({ dbId: d.id, ...d.data() }));
-                window.state.entries.sort((a,b) => b.timestamp - a.timestamp);
-                updateAllUI();
-            }, (err) => console.error("Error entries:", err));
-
-            const groupsRef = collection(db, 'artifacts', appId, 'public', 'data', 'groups');
-            onSnapshot(groupsRef, (snapshot) => {
-                const allGroups = [];
-                snapshot.forEach(d => allGroups.push({dbId: d.id, ...d.data()}));
-                window.state.groups = allGroups.filter(g => g.members && g.members.includes(currentUser.uid));
-                if (document.getElementById('page-groups').classList.contains('active')) renderGroups();
-            }, (err) => console.error("Error groups:", err));
-        }
-
-        function updateAllUI() {
-            const isHistory = document.getElementById('page-history').classList.contains('active');
-            const isStats = document.getElementById('page-stats').classList.contains('active');
-            const isHome = document.getElementById('page-home').classList.contains('active');
-
-            if (isHistory) { updateTimelineList('timeline-history', window.state.entries); updateHistoryChart(); }
-            else if (isStats) { updateStatsPage(); updateStatsChart(); }
-            else if (isHome) { updateHomeStats(); updateTimelineList('timeline-home', window.state.entries.slice(0, 5)); }
-            checkAchievements();
-        }
-
-        // FUNCIONES GLOBALES
-        window.login = async function() {
-            const name = document.getElementById('input-name').value.trim();
-            if (!name) return alert('Por favor, ingresa tu nombre.');
+        // FUNCIONES DE AUTH
+        window.toggleAuthMode = function(mode) {
+            window.state.authMode = mode;
+            document.getElementById('tab-login').classList.remove('active');
+            document.getElementById('tab-register').classList.remove('active');
+            document.getElementById('tab-' + mode).classList.add('active');
             
-            const profileData = { name, email: document.getElementById('input-email').value, joined: new Date().toISOString() };
-            window.state.user = profileData;
-            
-            if(useCloud && currentUser) {
-                await setDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'profile', 'info'), profileData);
-                startRealtimeListeners();
+            if (mode === 'register') {
+                document.getElementById('group-name').classList.remove('hidden');
+                document.getElementById('btn-auth').textContent = "Crear Cuenta →";
             } else {
-                localStorage.setItem('ecotrack_pro_v8', JSON.stringify(window.state));
+                document.getElementById('group-name').classList.add('hidden');
+                document.getElementById('btn-auth').textContent = "Ingresar →";
             }
-            
-            showMain();
+            document.getElementById('auth-error').textContent = "";
         };
 
-        function showMain() {
-            document.getElementById('screen-auth').classList.add('hidden');
-            document.getElementById('screen-auth').classList.remove('active');
-            document.getElementById('app-main').classList.remove('hidden');
-            document.getElementById('user-name').textContent = window.state.user.name;
-            updateAllUI();
+        window.handleAuth = async function() {
+            const email = document.getElementById('input-email').value.trim();
+            const pass = document.getElementById('input-pwd').value;
+            const errDiv = document.getElementById('auth-error');
+            errDiv.textContent = "";
+
+            if (!auth || !db) {
+                // MODO LOCAL PURO
+                const nameLocal = document.getElementById('input-name').value.trim() || "EcoAmigo Local";
+                window.state.user = { name: nameLocal };
+                document.getElementById('screen-auth').classList.add('hidden');
+                document.getElementById('app-main').classList.remove('hidden');
+                document.getElementById('user-name').textContent = nameLocal;
+                return updateAllUI();
+            }
+
+            try {
+                if (window.state.authMode === 'register') {
+                    const name = document.getElementById('input-name').value.trim();
+                    if (!name || !email || !pass) return errDiv.textContent = "Llena todos los campos.";
+                    if (pass.length < 6) return errDiv.textContent = "La contraseña debe tener al menos 6 caracteres.";
+                    
+                    const cred = await createUserWithEmailAndPassword(auth, email, pass);
+                    await setDoc(doc(db, 'artifacts', appId, 'users', cred.user.uid, 'profile', 'info'), { name, email, joined: new Date().toISOString() });
+                    // onAuthStateChanged hará el resto
+                } else {
+                    if (!email || !pass) return errDiv.textContent = "Ingresa correo y contraseña.";
+                    await signInWithEmailAndPassword(auth, email, pass);
+                    // onAuthStateChanged hará el resto
+                }
+            } catch (error) {
+                if(error.code === 'auth/email-already-in-use') errDiv.textContent = "El correo ya está registrado.";
+                else if(error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') errDiv.textContent = "Correo o contraseña incorrectos.";
+                else errDiv.textContent = "Error al conectar: " + error.message;
+            }
+        };
+
+        window.logoutUser = function() {
+            if(auth) signOut(auth);
+            window.closeSettings();
+        };
+
+        // LISTENERS & FEED SYNC
+        function clearListeners() { listenersUnsubscribe.forEach(unsub => unsubscribe()); listenersUnsubscribe = []; }
+
+        function startRealtimeListeners() {
+            if (!currentUser || !db) return;
+            clearListeners();
+            try {
+                // Entradas privadas
+                const unsub1 = onSnapshot(collection(db, 'artifacts', appId, 'users', currentUser.uid, 'entries'), (snapshot) => {
+                    window.state.entries = [];
+                    snapshot.forEach(d => window.state.entries.push({ dbId: d.id, ...d.data() }));
+                    window.state.entries.sort((a,b) => b.timestamp - a.timestamp);
+                    updateAllUI();
+                }, (err) => console.error(err));
+                
+                // Grupos
+                const unsub2 = onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'groups'), (snapshot) => {
+                    const allGroups = [];
+                    snapshot.forEach(d => allGroups.push(d.data()));
+                    window.state.groups = allGroups.filter(g => g.members && g.members.includes(currentUser.uid));
+                    renderGroups(); // Re-render groups and feed
+                }, (err) => console.error(err));
+
+                // FEED PÚBLICO
+                const unsub3 = onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'feed'), (snapshot) => {
+                    window.state.feedEntries = [];
+                    snapshot.forEach(d => window.state.feedEntries.push({ dbId: d.id, ...d.data() }));
+                    window.state.feedEntries.sort((a,b) => b.timestamp - a.timestamp);
+                    if (document.getElementById('page-groups').classList.contains('active')) renderGroups();
+                }, (err) => console.error(err));
+
+                listenersUnsubscribe.push(unsub1, unsub2, unsub3);
+            } catch(e) { console.warn("Error con los listeners", e); }
         }
 
+        // TABS Y UI
         window.navigateTo = function(page) {
             document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById('nav-' + page).classList.add('active');
-            
             ['home', 'groups', 'history', 'stats'].forEach(p => { 
                 const el = document.getElementById('page-' + p);
                 el.classList.add('hidden'); el.classList.remove('active');
             });
-            
             const targetPage = document.getElementById('page-' + page);
             targetPage.classList.remove('hidden'); targetPage.classList.add('active');
-            
             updateAllUI();
             if (page === 'groups') renderGroups();
             window.scrollTo(0, 0);
@@ -644,26 +718,25 @@
             window.state.theme = window.state.theme === 'dark' ? 'light' : 'dark';
             if (window.state.theme === 'dark') applyDarkThemeUI(); else applyLightThemeUI();
             localStorage.setItem('ecotrack_theme', window.state.theme);
-            if(!useCloud) localStorage.setItem('ecotrack_pro_v8', JSON.stringify(window.state));
             updateAllUI(); 
         };
+        
         function applyDarkThemeUI(){ document.body.setAttribute('data-theme', 'dark'); document.getElementById('toggle-theme')?.classList.add('active'); }
         function applyLightThemeUI(){ document.body.removeAttribute('data-theme'); document.getElementById('toggle-theme')?.classList.remove('active'); }
         window.openSettings = function() { document.getElementById('modal-settings').classList.add('active'); };
         window.closeSettings = function() { document.getElementById('modal-settings').classList.remove('active'); };
-        
+
         window.clearData = async function() { 
-            if (confirm('¿Borrar TODOS tus registros? Esto no se puede deshacer.')) { 
-                if(useCloud && currentUser) {
-                    const entriesRef = collection(db, 'artifacts', appId, 'users', currentUser.uid, 'entries');
-                    const snap = await getDocs(entriesRef);
+            if (confirm('¿Borrar TODOS tus registros personales? Esto no se puede deshacer.')) { 
+                if(db && currentUser) {
+                    const snap = await getDocs(collection(db, 'artifacts', appId, 'users', currentUser.uid, 'entries'));
                     snap.forEach(d => deleteDoc(d.ref));
-                    alert('Tus datos han sido borrados de la nube.');
-                } else {
-                    localStorage.removeItem('ecotrack_pro_v8');
-                    alert('Datos locales borrados.');
+                    // Nota: Idealmente deberías borrar tus posts del feed también, pero lo dejamos simple
                 }
-                location.reload();
+                window.state.entries = [];
+                updateAllUI();
+                alert('Tus datos han sido borrados.');
+                window.closeSettings();
             } 
         };
 
@@ -671,49 +744,15 @@
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
                 reader.onload = e => {
-                    const img = document.getElementById('photo-preview');
-                    img.src = e.target.result; img.style.display = 'block';
-                    alert("Foto adjuntada localmente (por privacidad/límites no se subirá a servidores).");
+                    document.getElementById('photo-preview').src = e.target.result; 
+                    document.getElementById('photo-preview').style.display = 'block';
+                    alert("Evidencia visual adjuntada.");
                 };
                 reader.readAsDataURL(input.files[0]);
             }
         };
 
-        // CALCULO DE IMPACTO Y MENSAJES
-        function generateImpactMessage(cat, subName, amt, impactVal) {
-            let msg = ''; let colateral = '';
-            if (cat === 'comida') {
-                msg = `Impacto de producción: ${impactVal} L de Agua Virtual y GEI asociadas.`;
-                if(subName.includes('Carne')) colateral = `Daño colateral: Deforestación y metano bovino (25x más calor que CO2).`;
-                else if(subName.includes('Pizza')) colateral = `Daño colateral: Industria de ultraprocesados y monocultivos intensivos.`;
-                else colateral = `Daño colateral: Uso de agroquímicos y eutrofización de cuerpos de agua.`;
-            } 
-            else if (cat === 'agua') {
-                msg = `Extracción/Vertido: ${impactVal} L afectados de la red hidráulica.`;
-                if(subName.includes('Sanitario')) colateral = `Daño colateral: Mezclar agua con residuos orgánicos dificulta el tratamiento en plantas.`;
-                else if(subName === 'Ducha') colateral = `Daño colateral: Bombear agua a ciudades consume inmensas cantidades de electricidad.`;
-                else colateral = `Daño colateral: Sobreexplotación que provoca hundimientos del subsuelo.`;
-            }
-            else if (cat === 'transporte') {
-                msg = `Emisiones estimadas: ${impactVal} kg de GEI y material particulado.`;
-                if(subName.includes('Camión')) colateral = `Daño colateral: PM2.5 directo a pulmones, agravando asma y smog.`;
-                else if(subName.includes('Metro')) colateral = `Impacto Positivo: Usar transporte masivo redujo drásticamente la huella individual.`;
-                else colateral = `Daño colateral: Emisión de NOx que genera ozono troposférico.`;
-            }
-            else if (cat === 'ia') {
-                msg = `Consumo Datacenter: ${impactVal} kg CO2eq procesados por servidores.`;
-                if(subName.includes('Imágenes')) colateral = `Daño colateral: Generar IA usa GPUs a tope, requiriendo litros de agua para refrigeración.`;
-                else colateral = `Daño colateral: Alto estrés energético en infraestructuras 24/7.`;
-            }
-            else if (cat === 'residuos') {
-                msg = `Generación: ${impactVal} kg de residuos sólidos urbanos.`;
-                if(subName.includes('Plástico')) colateral = `Daño colateral: Fotodegradación en microplásticos persistentes.`;
-                else colateral = `Daño colateral: Si llega al basurero, genera Lixiviados tóxicos y gas Metano.`;
-            }
-            else { msg = `Impacto General: ${impactVal} unidades estándar ambientales.`; }
-            return `<div class="impact-msg"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg><div>${msg}<br><span class="colateral-msg">${colateral}</span></div></div>`;
-        }
-
+        // CALCULO Y MODAL DE ENTRADAS
         function calculateLiveImpact() {
             const amt = parseFloat(document.getElementById('entry-amt').value) || 0;
             const subName = document.getElementById('entry-sub').value;
@@ -738,6 +777,12 @@
             calculateLiveImpact();
         };
 
+        function renderCategoryChips() {
+            document.getElementById('home-category-chips').innerHTML = Object.keys(cats).map(key => `
+                <div class="chip" onclick="openEntry('${key}')">${cats[key].icon} ${cats[key].label}</div>
+            `).join('');
+        }
+
         window.openEntry = function(cat) {
             window.state.currentCat = cat; const c = cats[cat];
             document.getElementById('entry-title').innerHTML = `${c.icon} Registrar ${c.label}`;
@@ -759,11 +804,13 @@
         };
 
         window.closeEntry = function() { document.getElementById('modal-entry').classList.remove('active'); };
+        
         window.toggleChatarra = function(chipElement, item) {
             if (chipElement.classList.contains('active-chatarra')) { chipElement.classList.remove('active-chatarra'); window.state.chatarra = window.state.chatarra.filter(i => i !== item); }
             else { chipElement.classList.add('active-chatarra'); window.state.chatarra.push(item); }
             calculateLiveImpact(); 
         };
+        
         window.setPrivacy = function(p) { window.state.privacy = p; document.querySelectorAll('.priv-btn').forEach(b => b.classList.remove('active')); document.getElementById('btn-' + (p === 'public' ? 'pub' : p === 'friends' ? 'friend' : 'priv')).classList.add('active'); };
 
         window.saveEntry = async function() {
@@ -778,138 +825,215 @@
             if(isNaN(impactVal) || impactVal < 0) { calculateLiveImpact(); impactVal = parseFloat(document.getElementById('entry-carbon-override').value) || 0; }
             
             const c = cats[window.state.currentCat];
-            const impactMessage = generateImpactMessage(window.state.currentCat, subName, amt, impactVal);
+            const ts = new Date(`${dateVal}T${timeVal}`).getTime();
 
             const newEntry = {
-                id: Date.now(), cat: window.state.currentCat, catLabel: c.label, subName: subName, amt, unit: c.unit,
+                dbId: 'local_' + Math.random().toString(36).substr(2, 9),
+                cat: window.state.currentCat, catLabel: c.label, subName: subName, amt, unit: c.unit,
                 note: document.getElementById('entry-note').value.trim(), privacy: window.state.privacy, chatarra: [...window.state.chatarra],
-                impactVal: impactVal, impactUnit: c.impUnit, impactMsgHTML: impactMessage,
-                timestamp: new Date(`${dateVal}T${timeVal}`).getTime(),
+                impactVal: impactVal, impactUnit: c.impUnit,
+                timestamp: ts,
                 dateStr: new Date(`${dateVal}T${timeVal}`).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' }),
                 timeStr: new Date(`${dateVal}T${timeVal}`).toLocaleTimeString('es-ES', {hour: '2-digit', minute:'2-digit'})
             };
             
-            if(useCloud && currentUser) {
-                const entriesRef = collection(db, 'artifacts', appId, 'users', currentUser.uid, 'entries');
-                await addDoc(entriesRef, newEntry);
+            window.closeEntry();
+
+            // SUBIR A NUBE
+            if(db && currentUser) {
+                try {
+                    // 1. Guardado Privado para Mi Historial
+                    await addDoc(collection(db, 'artifacts', appId, 'users', currentUser.uid, 'entries'), newEntry);
+                    
+                    // 2. Feed Público/Censurado (solo si no es privado)
+                    if (newEntry.privacy !== 'private') {
+                        await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'feed'), {
+                            ...newEntry,
+                            authorId: currentUser.uid,
+                            authorName: window.state.user.name,
+                            dbId: undefined // Let Firebase assign a new ID for the feed doc
+                        });
+                    }
+                } catch(e) { console.warn("Error guardando en la nube.", e); }
             } else {
-                window.state.entries.push(newEntry);
-                window.state.entries.sort((a,b) => b.timestamp - a.timestamp); 
-                localStorage.setItem('ecotrack_pro_v8', JSON.stringify(window.state));
+                // MODO LOCAL
+                window.state.entries.unshift(newEntry);
+                window.state.entries.sort((a,b) => b.timestamp - a.timestamp);
                 updateAllUI();
             }
-            window.closeEntry();
         };
-        
-        window.deleteEntry = async function(id) {
-            if(confirm('¿Eliminar este registro?')) {
-                if(useCloud && currentUser && isNaN(id)) {
-                    await deleteDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'entries', id));
+
+        window.deleteEntry = async function(dbId) {
+            if(confirm('¿Eliminar este registro de forma permanente en tu historial?')) {
+                if(db && currentUser && !dbId.startsWith('local_')) {
+                    try { await deleteDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'entries', dbId)); } 
+                    catch(e) { console.warn(e); }
                 } else {
-                    window.state.entries = window.state.entries.filter(e => e.id !== id && e.dbId !== id); 
-                    localStorage.setItem('ecotrack_pro_v8', JSON.stringify(window.state));
+                    window.state.entries = window.state.entries.filter(e => e.dbId !== dbId);
                     updateAllUI();
                 }
             }
         };
 
-        // SISTEMA DE GRUPOS (HYBRID)
+        // FEED Y REDES (El espionaje)
         window.renderGroups = function() {
-            const container = document.getElementById('groups-container');
+            const groupsBox = document.getElementById('groups-container');
+            const feedBox = document.getElementById('feed-container');
+            
+            // 1. Renderizar Mis Grupos
             if(window.state.groups.length === 0) {
-                container.innerHTML = `<div class="empty-state card"><div style="font-size: 3rem; margin-bottom: 16px;">👥</div><h3 style="margin-bottom: 8px;">Sin Redes</h3><p>Únete o crea un grupo ecológico.</p></div>`; return;
-            }
-            container.innerHTML = window.state.groups.map(g => `
-                <div class="card" style="border-left: 4px solid var(--sage);">
-                    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-                        <div>
-                            <h3 style="margin-bottom:4px;">${g.name}</h3>
-                            <p style="font-family:monospace; color:var(--accent); font-weight:bold; cursor:pointer;" onclick="copyCode('${g.code}')">Código: ${g.code} 📋</p>
-                            <p style="font-size:0.85rem; color:var(--muted); margin-top:4px;">👥 ${g.members ? g.members.length : g.membersCount} miembros activos</p>
+                groupsBox.innerHTML = `<div class="empty-state" style="padding: 10px;"><p>No perteneces a ninguna red todavía.</p></div>`;
+            } else {
+                groupsBox.innerHTML = window.state.groups.map(g => `
+                    <div class="card" style="border-left: 4px solid var(--sage); padding: 16px; margin-bottom: 12px;">
+                        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                            <div>
+                                <h3 style="margin-bottom:4px; font-size:1.1rem;">${g.name}</h3>
+                                <p style="font-family:monospace; color:var(--accent); font-weight:bold; cursor:pointer; display:inline-block;" onclick="copyCode('${g.code}')">Cód: ${g.code} 📋</p>
+                                <p style="font-size:0.8rem; color:var(--muted); margin-top:2px;">👥 ${g.members.length} ingenieros en la red</p>
+                            </div>
+                            <button onclick="alert('🔔 ¡Zumbido de motivación enviado a la red ${g.name}!')" style="background:var(--accent); color:white; border:none; border-radius:50%; width:36px; height:36px; cursor:pointer; font-size:1rem;" title="Enviar zumbido (nudge)">👉</button>
                         </div>
-                        <button onclick="alert('🔔 ¡Zumbido enviado a la red ${g.name}!')" style="background:var(--accent); color:white; border:none; border-radius:50%; width:40px; height:40px; cursor:pointer; font-size:1.2rem;" title="Enviar zumbido (nudge)">👉</button>
                     </div>
-                </div>
-            `).join('');
+                `).join('');
+            }
+
+            // 2. Renderizar Feed Global de las redes
+            if (!currentUser) {
+                feedBox.innerHTML = `<div class="empty-state"><p>Inicia sesión para ver el muro de actividad.</p></div>`;
+                return;
+            }
+
+            // Extraer a todos los miembros de mis redes
+            const myNetworkUids = new Set();
+            window.state.groups.forEach(g => g.members.forEach(uid => myNetworkUids.add(uid)));
+
+            // Filtrar feedEntries: solo los de mi red y que no sean míos
+            const networkFeed = window.state.feedEntries.filter(e => myNetworkUids.has(e.authorId) && e.authorId !== currentUser.uid);
+
+            if (networkFeed.length === 0) {
+                feedBox.innerHTML = `<div class="empty-state"><div style="font-size:2.5rem; margin-bottom:10px; opacity:0.5;">👀</div><p>Está muy tranquilo por aquí... ¡Nadie ha publicado!</p></div>`;
+                return;
+            }
+
+            feedBox.innerHTML = networkFeed.map(e => {
+                const icon = cats[e.cat]?.icon || '';
+                
+                if (e.privacy === 'friends') {
+                    // MODO CENSURADO (🔒)
+                    return `
+                    <div class="entry censored">
+                        <div class="feed-author">🔒 ${e.authorName} <span style="font-weight:normal; color:var(--muted); font-size:0.75rem; margin-left:auto;">${e.dateStr} ${e.timeStr}</span></div>
+                        <div class="entry-header">
+                            <span class="entry-cat">${icon} <span style="margin-top:2px;">Actividad Protegida (${e.catLabel})</span></span>
+                        </div>
+                        <div class="entry-date blur-text">Impacto oculto por privacidad: 12.34 kg CO2eq</div>
+                        <div class="entry-note" style="color:var(--amber); font-style:normal; border:none; font-weight:600; padding-top:0;">Actividad documentada bajo confidencialidad.</div>
+                    </div>`;
+                } else {
+                    // MODO PÚBLICO (🌐)
+                    return `
+                    <div class="entry">
+                        <div class="feed-author">🌐 ${e.authorName} <span style="font-weight:normal; color:var(--muted); font-size:0.75rem; margin-left:auto;">${e.dateStr} ${e.timeStr}</span></div>
+                        <div class="entry-header">
+                            <span class="entry-cat">${icon} <span style="margin-top:2px;">${e.catLabel} - ${e.subName}</span></span>
+                            <span class="entry-amt">${e.amt} <span style="font-size:0.8rem; font-weight:normal;">${e.unit}</span></span>
+                        </div>
+                        <div class="entry-date">Impacto: <strong>${e.impactVal} ${e.impactUnit}</strong></div>
+                        ${e.note ? `<div class="entry-note">"${e.note}"</div>` : ''}
+                    </div>`;
+                }
+            }).join('');
         };
 
         window.createGroup = async function() {
+            if(!db || !currentUser) return alert("Inicia sesión real para usar redes.");
             const name = prompt('Nombra tu nueva red de Ingeniería Ambiental:');
             if (!name) return;
             const code = Math.random().toString(36).substr(2, 6).toUpperCase();
             
-            if(useCloud && currentUser) {
+            try {
                 const newGroup = { name: name, code: code, admin: currentUser.uid, members: [currentUser.uid] };
                 await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'groups', code), newGroup);
-            } else {
-                window.state.groups.push({ id: Date.now(), name: name, code: code, role: 'admin', membersCount: 1 });
-                localStorage.setItem('ecotrack_pro_v8', JSON.stringify(window.state));
-                window.renderGroups();
-            }
-            alert(`¡Red creada! Código de acceso: ${code}`);
+                alert(`¡Red creada! Código para invitar amigos: ${code}`);
+            } catch(e) { alert("Error al crear grupo."); }
         };
 
         window.joinGroup = async function() {
+            if(!db || !currentUser) return alert("Inicia sesión real para usar redes.");
             const code = prompt('Ingresa el código de 6 dígitos de la red:');
             if (!code) return;
             const cleanCode = code.toUpperCase().trim();
             
-            if(useCloud && currentUser) {
+            try {
                 const gRef = doc(db, 'artifacts', appId, 'public', 'data', 'groups', cleanCode);
                 const gSnap = await getDoc(gRef);
+                
                 if(gSnap.exists()) {
                     const gData = gSnap.data();
                     if(!gData.members.includes(currentUser.uid)) {
                         gData.members.push(currentUser.uid);
                         await setDoc(gRef, gData); 
-                        alert('¡Te has unido exitosamente a la red!');
-                    } else { alert('Ya perteneces a esta red.'); }
-                } else { alert('El código ingresado no existe en la nube.'); }
-            } else {
-                window.state.groups.push({ id: Date.now(), name: "Red " + cleanCode, code: cleanCode, role: 'member', membersCount: Math.floor(Math.random() * 10) + 2 });
-                localStorage.setItem('ecotrack_pro_v8', JSON.stringify(window.state));
-                window.renderGroups();
-                alert('¡Te has unido en modo local!');
-            }
+                        alert('¡Entraste al grupo! Ahora verás su actividad en el Muro.');
+                    } else {
+                        alert('Ya estás espiando en esta red.');
+                    }
+                } else {
+                    alert('El código ingresado no existe.');
+                }
+            } catch(e) { alert("Error de conexión."); }
         };
         window.copyCode = function(code) { navigator.clipboard?.writeText(code).then(() => alert('Código copiado: ' + code)); };
 
-        // EXPORTACIÓN PROFESIONAL
-        window.exportData = function(type) {
-            if (window.state.entries.length === 0) { alert('No hay datos suficientes.'); return; }
-            const ts = new Date().toISOString().split('T')[0];
-            if (type === 'excel') {
-                const wsData = window.state.entries.map(e => ({ 'Fecha': e.dateStr, 'Hora': e.timeStr, 'Categoría': e.catLabel.toUpperCase(), 'Subcategoría': e.subName, 'Cant.': e.amt, 'Unidad': e.unit, 'Impacto Generado': `${e.impactVal} ${e.impactUnit}`, 'Notas': e.note }));
-                const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(wsData), "Bitácora Ecotrack"); XLSX.writeFile(wb, `EcoTrack_${ts}.xlsx`);
-            } 
-            else if (type === 'pdf') {
-                const { jsPDF } = window.jspdf; const doc = new jsPDF('p', 'pt');
-                doc.setFontSize(14); doc.text("Reporte Ingeniería Ambiental - EcoTrack Pro", 40, 40); doc.setFontSize(10); doc.text(`Usuario: ${window.state.user.name} | Fecha: ${ts}`, 40, 60);
-                const tableRows = window.state.entries.map(e => [ `${e.dateStr} ${e.timeStr}`, `${e.catLabel} (${e.subName})`, `${e.amt} ${e.unit}`, `${e.impactVal} ${e.impactUnit}` ]);
-                doc.autoTable({ head: [["Fecha", "Categoría", "Cant.", "Impacto"]], body: tableRows, startY: 80, styles: { fontSize: 8 } }); doc.save(`EcoTrack_${ts}.pdf`);
+        // ACTUALIZACIÓN DE UI (GRAFICAS Y LISTAS LOCALES)
+        function updateAllUI() {
+            if (document.getElementById('page-history').classList.contains('active')) { 
+                updateTimelineList('timeline-history', window.state.entries); 
+                updateHistoryChart(); 
             }
-            else if (type === 'csv') {
-                const csv = 'Fecha,Hora,Categoría,Subcategoría,Cantidad,Unidad,Impacto,Unidad_Impacto,Notas\n' + window.state.entries.map(e => `"${e.dateStr}","${e.timeStr}","${e.catLabel}","${e.subName}",${e.amt},"${e.unit}",${e.impactVal},"${e.impactUnit}","${e.note}"`).join('\n'); download(csv, `ecotrack_${ts}.csv`, 'text/csv');
-            } else if (type === 'json') { download(JSON.stringify(window.state.entries, null, 2), `ecotrack_${ts}.json`, 'application/json'); }
-        };
-        function download(content, filename, type) { const blob = new Blob([content], { type }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = filename; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url); }
+            else if (document.getElementById('page-stats').classList.contains('active')) { 
+                updateStatsPage(); updateStatsChart(); 
+            }
+            else if (document.getElementById('page-home').classList.contains('active')) { 
+                updateHomeStats(); updateTimelineList('timeline-home', window.state.entries.slice(0, 5)); 
+            }
+            checkAchievements();
+        }
 
-        // RENDER UI COMPONENTS
         function updateHomeStats() {
             const todayStr = new Date().toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' });
             const list = window.state.entries.filter(e => e.dateStr === todayStr);
-            
             let co2 = 0; let agua = 0; let res = 0;
             list.forEach(e => {
-                if(e.cat === 'energia' || e.cat === 'transporte' || e.cat === 'digital' || e.cat === 'ia') co2 += e.impactVal;
+                if(['energia', 'transporte', 'digital', 'ia'].includes(e.cat)) co2 += e.impactVal;
                 if(e.cat === 'agua') agua += e.impactVal;
                 if(e.cat === 'residuos') res += e.impactVal;
             });
-
             document.getElementById('stat-entries').textContent = list.length;
             document.getElementById('stat-emisiones').textContent = co2.toFixed(1);
             document.getElementById('stat-agua').textContent = agua.toFixed(1);
             document.getElementById('stat-residuos').textContent = res.toFixed(1);
+        }
+
+        function updateTimelineList(containerId, entriesArr) {
+            const box = document.getElementById(containerId);
+            if (entriesArr.length === 0) { box.innerHTML = `<div class="empty-state"><div style="font-size:3rem; margin-bottom:16px; opacity:0.3;">🌱</div><p>No tienes registros aquí.</p></div>`; return; }
+            box.innerHTML = entriesArr.map(e => {
+                // Indicador de Privacidad en mi historial personal
+                let privIcon = '🌐';
+                if(e.privacy === 'friends') privIcon = '🔒';
+                if(e.privacy === 'private') privIcon = '👻';
+
+                return `<div class="entry">
+                    <button class="delete-btn" onclick="deleteEntry('${e.dbId}')" title="Eliminar registro">✕</button>
+                    <div class="entry-header">
+                        <span class="entry-cat">${cats[e.cat]?.icon || ''} <span style="margin-top:2px;">${e.catLabel} - ${e.subName}</span></span>
+                        <span class="entry-amt">${e.amt} <span style="font-size:0.8rem; font-weight:normal;">${e.unit}</span></span>
+                    </div>
+                    <div class="entry-date">${privIcon} | ${e.dateStr} a las ${e.timeStr} • Impacto: <strong>${e.impactVal} ${e.impactUnit}</strong></div>
+                    ${e.note ? `<div class="entry-note">"${e.note}"</div>` : ''}
+                </div>`;
+            }).join('');
         }
 
         function checkAchievements() {
@@ -917,33 +1041,15 @@
             const hasIa = window.state.entries.some(e => e.cat === 'ia');
             const elAgua = document.getElementById('achieve-agua');
             const elIa = document.getElementById('achieve-ia');
-            
             if(hasAgua && elAgua) { elAgua.style.opacity = "1"; elAgua.style.background = "rgba(95,201,168,0.1)"; elAgua.innerHTML = `<div style="font-size: 2rem; margin-bottom: 8px;">💧</div><div style="font-weight: 700; color: var(--sage);">Guardián Hídrico</div><div style="font-size: 0.85rem; color: var(--muted);">Desbloqueado</div>`; }
             if(hasIa && elIa) { elIa.style.opacity = "1"; elIa.style.background = "rgba(95,201,168,0.1)"; elIa.innerHTML = `<div style="font-size: 2rem; margin-bottom: 8px;">🤖</div><div style="font-weight: 700; color: var(--sage);">Consciencia Artificial</div><div style="font-size: 0.85rem; color: var(--muted);">Desbloqueado</div>`; }
         }
 
-        function updateTimelineList(containerId, entriesArr) {
-            const box = document.getElementById(containerId);
-            if (entriesArr.length === 0) { box.innerHTML = `<div class="empty-state"><div style="font-size:3rem; margin-bottom:16px; opacity:0.3;">🌱</div><p>No hay registros de medición. ¡A medir!</p></div>`; return; }
-            box.innerHTML = entriesArr.map(e => `
-                <div class="entry">
-                    <button class="delete-btn" onclick="deleteEntry('${e.dbId || e.id}')" title="Eliminar registro">✕</button>
-                    <div class="entry-header">
-                        <span class="entry-cat">${cats[e.cat]?.icon || ''} <span style="margin-top:2px;">${e.catLabel} - ${e.subName}</span></span>
-                        <span class="entry-amt">${e.amt} <span style="font-size:0.8rem; font-weight:normal;">${e.unit}</span></span>
-                    </div>
-                    <div class="entry-date">${e.dateStr} a las ${e.timeStr} • Impacto: <strong>${e.impactVal} ${e.impactUnit.split(' ')[0]}</strong></div>
-                    ${e.impactMsgHTML || ''}
-                    ${e.note ? `<div class="entry-note">"${e.note}"</div>` : ''}
-                </div>`).join('');
-        }
-
         function updateStatsPage() {
             document.getElementById('total-entries').textContent = window.state.entries.length;
-            let co2 = 0; window.state.entries.forEach(e => { if(e.cat === 'energia' || e.cat === 'transporte' || e.cat === 'digital' || e.cat === 'ia') co2 += e.impactVal; });
+            let co2 = 0; window.state.entries.forEach(e => { if(['energia', 'transporte', 'digital', 'ia'].includes(e.cat)) co2 += e.impactVal; });
             document.getElementById('total-carbon').textContent = co2.toFixed(1);
             document.getElementById('streak-days').textContent = new Set(window.state.entries.map(e => e.dateStr)).size || 0;
-            checkAchievements();
         }
 
         function getChartColors() { const isDark = window.state.theme === 'dark'; return { text: isDark ? '#e8f5f0' : '#0d3328', grid: isDark ? 'rgba(168, 230, 207, 0.1)' : 'rgba(13, 51, 40, 0.1)', line: isDark ? '#7dd3c0' : '#2d8a6e' }; }
@@ -952,20 +1058,20 @@
             const ctx = document.getElementById('history-chart'); if(!ctx) return;
             const last7Days = []; for(let i=6; i>=0; i--) { const d = new Date(); d.setDate(d.getDate() - i); last7Days.push(d.toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' })); }
             const dataMap = {}; last7Days.forEach(d => dataMap[d] = 0);
-            window.state.entries.forEach(e => { if(dataMap[e.dateStr] !== undefined && (e.cat === 'energia' || e.cat === 'transporte' || e.cat === 'digital' || e.cat === 'ia')) dataMap[e.dateStr] += e.impactVal; });
-            const cColors = getChartColors();
+            window.state.entries.forEach(e => { if(dataMap[e.dateStr] !== undefined && ['energia', 'transporte', 'digital', 'ia'].includes(e.cat)) dataMap[e.dateStr] += e.impactVal; });
+            
             if (chartHistoryObj) chartHistoryObj.destroy();
             chartHistoryObj = new Chart(ctx, {
-                type: 'line', data: { labels: last7Days.map(d => d.slice(0,5)), datasets: [{ label: 'Emisiones GEI (kg)', data: Object.values(dataMap), borderColor: cColors.line, backgroundColor: cColors.line + '33', tension: 0.4, fill: true, pointRadius: 4 }] },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: cColors.grid }, ticks: { color: cColors.text } }, x: { grid: { display: false }, ticks: { color: cColors.text } } } }
+                type: 'line', data: { labels: last7Days.map(d => d.slice(0,5)), datasets: [{ label: 'Emisiones GEI (kg)', data: Object.values(dataMap), borderColor: '#ffffff', backgroundColor: 'rgba(255,255,255,0.2)', tension: 0.4, fill: true, pointRadius: 4 }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.1)' }, ticks: { color: '#ffffff' } }, x: { grid: { display: false }, ticks: { color: '#ffffff' } } } }
             });
         }
 
         function updateStatsChart() {
             const ctx = document.getElementById('stats-chart'); if(!ctx) return;
             const catSums = {}; Object.keys(cats).forEach(k => catSums[k] = 0);
-            window.state.entries.forEach(e => { catSums[e.cat] += 1; }); 
-            const labels = []; const data = []; const bgColors = ['#5fc9a8', '#2d8a6e', '#e85d4e', '#e9c46a', '#4ecdc4', '#ff6b6b', '#1a535c', '#ffe66d', '#845ec2'];
+            window.state.entries.forEach(e => { catSums[e.cat] += 1; });
+            const labels = []; const data = []; const bgColors = ['#5fc9a8', '#2d8a6e', '#e85d4e', '#e9c46a', '#4ecdc4', '#ff6b6b', '#1a535c', '#ffe66d'];
             Object.keys(catSums).forEach(cat => { if(catSums[cat] > 0) { labels.push(cats[cat].label); data.push(catSums[cat]); } });
             if(data.length === 0) { labels.push('Sin datos'); data.push(1); }
             const cColors = getChartColors();
@@ -975,6 +1081,27 @@
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: cColors.text, padding: 20, font: {family: 'Outfit'} } } }, cutout: '65%' }
             });
         }
+
+        // Exportaciones
+        window.exportData = function(type) {
+            if (window.state.entries.length === 0) { alert('No hay datos.'); return; }
+            const ts = new Date().toISOString().split('T')[0];
+            const userName = window.state.user?.name || "Usuario_Local";
+            if (type === 'excel') {
+                const wsData = window.state.entries.map(e => ({ 'Fecha': e.dateStr, 'Hora': e.timeStr, 'Categoría': e.catLabel.toUpperCase(), 'Subcategoría': e.subName, 'Cant.': e.amt, 'Unidad': e.unit, 'Impacto Generado': `${e.impactVal} ${e.impactUnit}`, 'Notas': e.note }));
+                const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(wsData), "Bitácora Nube"); XLSX.writeFile(wb, `EcoTrack_${ts}.xlsx`);
+            } 
+            else if (type === 'pdf') {
+                const { jsPDF } = window.jspdf; const doc = new jsPDF('p', 'pt');
+                doc.setFontSize(14); doc.text("Reporte Ingeniería Ambiental - EcoTrack Pro", 40, 40); doc.setFontSize(10); doc.text(`Usuario: ${userName} | Fecha: ${ts}`, 40, 60);
+                const tableRows = window.state.entries.map(e => [ `${e.dateStr} ${e.timeStr}`, `${e.catLabel} (${e.subName})`, `${e.amt} ${e.unit}`, `${e.impactVal} ${e.impactUnit}` ]);
+                doc.autoTable({ head: [["Fecha", "Categoría", "Cant.", "Impacto"]], body: tableRows, startY: 80, styles: { fontSize: 8 } }); doc.save(`EcoTrack_${ts}.pdf`);
+            }
+            else if (type === 'csv') {
+                const csv = 'Fecha,Hora,Categoría,Subcategoría,Cantidad,Unidad,Impacto,Unidad_Impacto,Notas\n' + window.state.entries.map(e => `"${e.dateStr}","${e.timeStr}","${e.catLabel}","${e.subName}",${e.amt},"${e.unit}",${e.impactVal},"${e.impactUnit}","${e.note}"`).join('\n'); download(csv, `ecotrack_${ts}.csv`, 'text/csv');
+            } else if (type === 'json') { download(JSON.stringify(window.state.entries, null, 2), `ecotrack_${ts}.json`, 'application/json'); }
+        };
+        function download(content, filename, type) { const blob = new Blob([content], { type }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = filename; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url); }
     </script>
 </body>
 </html>
