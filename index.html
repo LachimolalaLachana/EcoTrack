@@ -512,10 +512,6 @@
         };
         const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : dummyFirebaseConfig;
         
-        // Trampa para evitar el error feo de "api-key-not-valid" en GitHub Pages.
-        const isFakeFirebase = firebaseConfig.apiKey === "AIzaSyBmp0xTRJBdtEJJrJVbPgrBWOEkWCcZfYo";
-
-        let app, auth, db;
         if (!isFakeFirebase) {
             try {
                 app = initializeApp(firebaseConfig);
