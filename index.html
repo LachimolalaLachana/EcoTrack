@@ -500,21 +500,31 @@
 
         window.state = { user: null, entries: [], feedEntries: [], currentCat: null, privacy: 'public', theme: 'light', chatarra: [], groups: [], authMode: 'login' };
 
-        // [FIREBASE SETUP]
-         const firebaseConfig = {
-             apiKey: "AIzaSyBmp0xTRJBdtEJJrJVbPgrBWOEkWCcZfYo",
-             authDomain: "ecotrack-c42b7.firebaseapp.com",
-             projectId: "ecotrack-c42b7",
-             storageBucket: "ecotrack-c42b7.firebasestorage.app",
-             messagingSenderId: "308583022462",
-             appId: "1:308583022462:web:b1c47aa7e6078a6e563d2f",
-              measurementId: "G-TN2RCS7QZT"
-        };
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : dummyFirebaseConfig;
+        // [FIREBASE SETUP] - SE ARREGLA LA DOBLE DECLARACIÓN AQUI
+        let finalFirebaseConfig;
+
+        if (typeof __firebase_config !== 'undefined') {
+            finalFirebaseConfig = JSON.parse(__firebase_config);
+        } else {
+            // Usa tu propia configuración si lo abres localmente en tu PC (C:/...)
+             const firebaseConfig = {
+                 apiKey: "AIzaSyBmp0xTRJBdtEJJrJVbPgrBWOEkWCcZfYo",
+                 authDomain: "ecotrack-c42b7.firebaseapp.com",
+                 projectId: "ecotrack-c42b7",
+                  storageBucket: "ecotrack-c42b7.firebasestorage.app",
+                 messagingSenderId: "308583022462",
+                 appId: "1:308583022462:web:b1c47aa7e6078a6e563d2f",
+                 measurementId: "G-TN2RCS7QZT"
+             };
+        }
         
+        // Trampa para evitar el error feo de "api-key-not-valid" si corres este codigo literal con los corchetes
+        const isFakeFirebase = !finalFirebaseConfig.apiKey || finalFirebaseConfig.apiKey.includes("borro por seguridad");
+
+        let app, auth, db;
         if (!isFakeFirebase) {
             try {
-                app = initializeApp(firebaseConfig);
+                app = initializeApp(finalFirebaseConfig);
                 auth = getAuth(app);
                 db = getFirestore(app);
             } catch(e) {
@@ -559,7 +569,7 @@
         document.getElementById('entry-amt').addEventListener('input', calculateLiveImpact);
 
         function fallbackLocalMode() {
-            document.getElementById('cloud-status').innerHTML = "⚠️ MODO LOCAL / DEMO (Faltan tus llaves de Firebase)";
+            document.getElementById('cloud-status').innerHTML = "⚠️ MODO LOCAL / DEMO (Faltan tus llaves reales de Firebase)";
             document.getElementById('screen-auth').classList.remove('hidden');
             document.getElementById('screen-auth').classList.add('active');
         }
@@ -570,8 +580,6 @@
             try {
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                     await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    // Esperar a que el usuario decida ingresar
                 }
             } catch (e) { fallbackLocalMode(); }
         };
@@ -628,7 +636,7 @@
             errDiv.textContent = "";
 
             if (!auth || !db || isFakeFirebase) {
-                // MODO LOCAL PURO (Para tu Github Pages sin BD)
+                // MODO LOCAL PURO (Para tu C:/ sin BD)
                 const nameLocal = document.getElementById('input-name').value.trim() || emailStr.split('@')[0] || "EcoAmigo";
                 
                 if (window.state.authMode === 'register' && (!nameLocal || !emailStr || !pass)) {
@@ -670,7 +678,7 @@
         };
 
         // LISTENERS & FEED SYNC
-        function clearListeners() { listenersUnsubscribe.forEach(unsub => unsubscribe()); listenersUnsubscribe = []; }
+        function clearListeners() { listenersUnsubscribe.forEach(unsub => unsub()); listenersUnsubscribe = []; }
 
         function startRealtimeListeners() {
             if (!currentUser || !db || isFakeFirebase) return;
