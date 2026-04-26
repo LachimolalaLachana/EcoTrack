@@ -20,14 +20,14 @@
         
         :root {
             --bg: #f0f7f4; --card: rgba(255, 255, 255, 0.85); --text: #0d3328; --text-light: #1a5f4a;
-            --muted: #5a8a7a; --accent: #e85d4e; --sage: #2d8a6e; --mint: #5fc9a8; --amber: #e9c46a;
-            --border: rgba(13, 51, 40, 0.1); --shadow: 0 8px 32px rgba(13, 51, 40, 0.05);
+            --muted: #4a7566; --accent: #e85d4e; --sage: #2d8a6e; --mint: #5fc9a8; --amber: #e9c46a;
+            --border: rgba(13, 51, 40, 0.15); --shadow: 0 8px 32px rgba(13, 51, 40, 0.05);
         }
         
         [data-theme="dark"] {
-            --bg: #0a1a15; --card: rgba(18, 43, 34, 0.9); --text: #e8f5f0; --text-light: #a8e6cf;
-            --muted: #7ab3a0; --accent: #ff7b6b; --sage: #5fc9a8; --mint: #7dd3c0; --amber: #f4d03f;
-            --border: rgba(168, 230, 207, 0.15); --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --bg: #0a1a15; --card: rgba(22, 48, 38, 0.95); --text: #e8f5f0; --text-light: #a8e6cf;
+            --muted: #8bbfae; --accent: #ff7b6b; --sage: #5fc9a8; --mint: #7dd3c0; --amber: #f4d03f;
+            --border: rgba(168, 230, 207, 0.2); --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
         }
         
         body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; transition: background-color 0.3s ease, color 0.3s ease; }
@@ -62,8 +62,8 @@
         
         /* FORM & BUTTONS */
         .form-group { margin-bottom: 20px; }
-        label { display: block; font-size: 0.9rem; font-weight: 600; margin-bottom: 8px; color: var(--text-light); }
-        input, select, textarea { width: 100%; padding: 14px 16px; border: 2px solid var(--border); border-radius: 16px; font-size: 1rem; background: var(--bg); color: var(--text); font-family: inherit; transition: border-color 0.3s; }
+        label { display: block; font-size: 0.95rem; font-weight: 600; margin-bottom: 8px; color: var(--text-light); }
+        input, select, textarea { width: 100%; padding: 14px 16px; border: 2px solid var(--border); border-radius: 16px; font-size: 1rem; background: var(--card); color: var(--text); font-family: inherit; transition: border-color 0.3s; }
         input:focus, select:focus, textarea:focus { outline: none; border-color: var(--sage); }
         .helper-text { display: block; font-size: 0.8rem; color: var(--muted); margin-top: 6px; font-style: italic; }
         .btn { width: 100%; padding: 16px; border: none; border-radius: 16px; font-size: 1.05rem; font-weight: 700; cursor: pointer; transition: all 0.2s; font-family: inherit; display: flex; align-items: center; justify-content: center; gap: 10px; }
@@ -72,10 +72,10 @@
         .btn-secondary { background: var(--border); color: var(--text); font-weight: 600; }
         .btn-green { background: var(--sage); color: white; box-shadow: 0 8px 20px rgba(45, 138, 110, 0.3); }
         
-        /* AUTH TABS */
-        .auth-tabs { display: flex; background: var(--border); border-radius: 16px; padding: 4px; margin-bottom: 20px; }
-        .auth-tab { flex: 1; padding: 12px; text-align: center; font-weight: 700; color: var(--muted); cursor: pointer; border-radius: 12px; transition: all 0.3s; }
-        .auth-tab.active { background: var(--card); color: var(--sage); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        /* AUTH TABS MEJORADOS */
+        .auth-tabs { display: flex; background: var(--border); border-radius: 16px; padding: 6px; margin-bottom: 24px; }
+        .auth-tab { flex: 1; padding: 14px; text-align: center; font-weight: 700; color: var(--muted); cursor: pointer; border-radius: 12px; transition: all 0.3s; font-size: 1.05rem; }
+        .auth-tab.active { background: var(--sage); color: white; box-shadow: 0 4px 12px rgba(45, 138, 110, 0.3); }
 
         /* STATS (Scrollable for Home) */
         .stats-row { display: flex; overflow-x: auto; gap: 15px; margin-top: 24px; padding-bottom: 10px; scroll-snap-type: x mandatory; }
@@ -97,7 +97,7 @@
         #timeline-history, #feed-container { max-height: 400px; overflow-y: auto; padding-right: 12px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
         .entry { position: relative; margin-bottom: 16px; padding: 16px; background: var(--card); border-radius: 16px; border: 1px solid var(--border); box-shadow: var(--shadow); transition: transform 0.2s; }
         .entry.censored { background: repeating-linear-gradient(45deg, var(--card), var(--card) 10px, rgba(168, 230, 207, 0.05) 10px, rgba(168, 230, 207, 0.05) 20px); border: 1px dashed var(--muted); opacity: 0.9;}
-        .entry.censored .blur-text { filter: blur(4px); user-select: none; pointer-events: none; }
+        .entry.censored .blur-text { filter: blur(5px); user-select: none; pointer-events: none; }
         .entry:hover { transform: translateX(4px); }
         .entry::before { content: ''; position: absolute; left: -20px; top: 20px; width: 12px; height: 12px; background: var(--bg); border: 3px solid var(--sage); border-radius: 50%; }
         .entry-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; padding-right: 24px; }
@@ -107,9 +107,9 @@
         .entry-note { font-style: italic; color: var(--text); font-size: 0.9rem; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); }
         .feed-author { display: flex; align-items: center; gap: 8px; font-weight: bold; color: var(--accent); margin-bottom: 12px; font-size: 0.9rem; border-bottom: 1px solid var(--border); padding-bottom: 8px;}
         
-        /* DATOS MAMONES (COLATERAL) */
-        .impact-msg { background: rgba(45, 138, 110, 0.08); border-left: 3px solid var(--sage); padding: 10px 12px; margin-top: 12px; border-radius: 4px 10px 10px 4px; font-size: 0.85rem; color: var(--text); display: flex; gap: 10px; align-items: flex-start; line-height: 1.4; }
-        .impact-msg svg { min-width: 16px; margin-top: 2px; color: var(--sage); }
+        /* DATOS MAMONES (COLATERAL) MEJORADOS */
+        .impact-msg { background: rgba(45, 138, 110, 0.08); border-left: 3px solid var(--sage); padding: 12px; margin-top: 14px; border-radius: 4px 10px 10px 4px; font-size: 0.85rem; color: var(--text); display: flex; gap: 10px; align-items: flex-start; line-height: 1.5; }
+        .impact-msg svg { min-width: 18px; margin-top: 2px; color: var(--sage); }
         .colateral-msg { margin-top: 6px; font-size: 0.8rem; color: var(--accent); font-weight: 600; display: block; }
         .delete-btn { position: absolute; top: 16px; right: 16px; background: none; border: none; color: var(--muted); cursor: pointer; font-size: 1.2rem; transition: color 0.2s; }
         .delete-btn:hover { color: var(--accent); }
@@ -203,7 +203,7 @@
                 </div>
                 
                 <button class="btn btn-primary" id="btn-auth" onclick="handleAuth()">Ingresar →</button>
-                <div id="auth-error" style="color: var(--accent); font-size: 0.85rem; margin-top: 10px; text-align: center; font-weight: bold;"></div>
+                <div id="auth-error" style="color: var(--accent); font-size: 0.85rem; margin-top: 15px; text-align: center; font-weight: bold;"></div>
             </div>
         </div>
     </div>
@@ -510,13 +510,18 @@
         };
         const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : dummyFirebaseConfig;
         
+        // Trampa para evitar el error feo de "api-key-not-valid" en GitHub Pages.
+        const isFakeFirebase = firebaseConfig.apiKey === "TU_API_KEY";
+
         let app, auth, db;
-        try {
-            app = initializeApp(firebaseConfig);
-            auth = getAuth(app);
-            db = getFirestore(app);
-        } catch(e) {
-            console.warn("Configuración de Firebase no válida. Entrando en Modo Offline.");
+        if (!isFakeFirebase) {
+            try {
+                app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+            } catch(e) {
+                console.warn("Error Firebase:", e);
+            }
         }
 
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
@@ -556,26 +561,25 @@
         document.getElementById('entry-amt').addEventListener('input', calculateLiveImpact);
 
         function fallbackLocalMode() {
-            document.getElementById('cloud-status').innerHTML = "⚠️ MODO LOCAL ACTIVO (Datos solo en este dispositivo)";
+            document.getElementById('cloud-status').innerHTML = "⚠️ MODO LOCAL / DEMO (Faltan tus llaves de Firebase)";
             document.getElementById('screen-auth').classList.remove('hidden');
             document.getElementById('screen-auth').classList.add('active');
         }
 
         // AUTH & INICIO
         const initAuth = async () => {
-            if(!auth) return fallbackLocalMode();
+            if(!auth || isFakeFirebase) return fallbackLocalMode();
             try {
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                     await signInWithCustomToken(auth, __initial_auth_token);
                 } else {
-                    // Esperar a que el usuario decida ingresar (sin forzar Anónimo de golpe para el login manual)
-                    // Si el onAuthStateChanged detecta sesión activa, entrará solo.
+                    // Esperar a que el usuario decida ingresar
                 }
             } catch (e) { fallbackLocalMode(); }
         };
         initAuth();
 
-        if(auth) {
+        if(auth && !isFakeFirebase) {
             onAuthStateChanged(auth, async (user) => {
                 if (user) {
                     currentUser = user;
@@ -588,7 +592,6 @@
                             document.getElementById('user-name').textContent = window.state.user.name;
                             startRealtimeListeners();
                         } else {
-                            // Usuario existe (quizá por customToken) pero no tiene perfil
                             document.getElementById('screen-auth').classList.remove('hidden');
                             document.getElementById('screen-auth').classList.add('active');
                         }
@@ -601,8 +604,6 @@
                     document.getElementById('screen-auth').classList.add('active');
                 }
             });
-        } else {
-            fallbackLocalMode();
         }
 
         // FUNCIONES DE AUTH
@@ -623,14 +624,21 @@
         };
 
         window.handleAuth = async function() {
-            const email = document.getElementById('input-email').value.trim();
+            const emailStr = document.getElementById('input-email').value.trim();
             const pass = document.getElementById('input-pwd').value;
             const errDiv = document.getElementById('auth-error');
             errDiv.textContent = "";
 
-            if (!auth || !db) {
-                // MODO LOCAL PURO
-                const nameLocal = document.getElementById('input-name').value.trim() || "EcoAmigo Local";
+            if (!auth || !db || isFakeFirebase) {
+                // MODO LOCAL PURO (Para tu Github Pages sin BD)
+                const nameLocal = document.getElementById('input-name').value.trim() || emailStr.split('@')[0] || "EcoAmigo";
+                
+                if (window.state.authMode === 'register' && (!nameLocal || !emailStr || !pass)) {
+                    return errDiv.textContent = "Llena todos los campos para el modo local.";
+                } else if (window.state.authMode === 'login' && (!emailStr || !pass)) {
+                    return errDiv.textContent = "Ingresa tu correo y contraseña.";
+                }
+
                 window.state.user = { name: nameLocal };
                 document.getElementById('screen-auth').classList.add('hidden');
                 document.getElementById('app-main').classList.remove('hidden');
@@ -641,16 +649,14 @@
             try {
                 if (window.state.authMode === 'register') {
                     const name = document.getElementById('input-name').value.trim();
-                    if (!name || !email || !pass) return errDiv.textContent = "Llena todos los campos.";
+                    if (!name || !emailStr || !pass) return errDiv.textContent = "Llena todos los campos.";
                     if (pass.length < 6) return errDiv.textContent = "La contraseña debe tener al menos 6 caracteres.";
                     
-                    const cred = await createUserWithEmailAndPassword(auth, email, pass);
-                    await setDoc(doc(db, 'artifacts', appId, 'users', cred.user.uid, 'profile', 'info'), { name, email, joined: new Date().toISOString() });
-                    // onAuthStateChanged hará el resto
+                    const cred = await createUserWithEmailAndPassword(auth, emailStr, pass);
+                    await setDoc(doc(db, 'artifacts', appId, 'users', cred.user.uid, 'profile', 'info'), { name, email: emailStr, joined: new Date().toISOString() });
                 } else {
-                    if (!email || !pass) return errDiv.textContent = "Ingresa correo y contraseña.";
-                    await signInWithEmailAndPassword(auth, email, pass);
-                    // onAuthStateChanged hará el resto
+                    if (!emailStr || !pass) return errDiv.textContent = "Ingresa correo y contraseña.";
+                    await signInWithEmailAndPassword(auth, emailStr, pass);
                 }
             } catch (error) {
                 if(error.code === 'auth/email-already-in-use') errDiv.textContent = "El correo ya está registrado.";
@@ -660,7 +666,8 @@
         };
 
         window.logoutUser = function() {
-            if(auth) signOut(auth);
+            if(auth && !isFakeFirebase) signOut(auth);
+            else location.reload(); // Hard reset para modo local
             window.closeSettings();
         };
 
@@ -668,7 +675,7 @@
         function clearListeners() { listenersUnsubscribe.forEach(unsub => unsubscribe()); listenersUnsubscribe = []; }
 
         function startRealtimeListeners() {
-            if (!currentUser || !db) return;
+            if (!currentUser || !db || isFakeFirebase) return;
             clearListeners();
             try {
                 // Entradas privadas
@@ -684,7 +691,7 @@
                     const allGroups = [];
                     snapshot.forEach(d => allGroups.push(d.data()));
                     window.state.groups = allGroups.filter(g => g.members && g.members.includes(currentUser.uid));
-                    renderGroups(); // Re-render groups and feed
+                    renderGroups(); 
                 }, (err) => console.error(err));
 
                 // FEED PÚBLICO
@@ -728,10 +735,9 @@
 
         window.clearData = async function() { 
             if (confirm('¿Borrar TODOS tus registros personales? Esto no se puede deshacer.')) { 
-                if(db && currentUser) {
+                if(db && currentUser && !isFakeFirebase) {
                     const snap = await getDocs(collection(db, 'artifacts', appId, 'users', currentUser.uid, 'entries'));
                     snap.forEach(d => deleteDoc(d.ref));
-                    // Nota: Idealmente deberías borrar tus posts del feed también, pero lo dejamos simple
                 }
                 window.state.entries = [];
                 updateAllUI();
@@ -752,7 +758,41 @@
             }
         };
 
-        // CALCULO Y MODAL DE ENTRADAS
+        // DATOS MAMONES Y CALCULO MEJORADOS
+        function generateImpactMessage(cat, subName, amt, impactVal) {
+            let msg = ''; let colateral = '';
+            if (cat === 'comida') {
+                msg = `Producción: ~${impactVal} L de Agua Virtual y GEI.`;
+                if(subName.includes('Carne')) colateral = `Nota: La res tiene una altísima huella hídrica y genera gas metano.`;
+                else if(subName.includes('Vegetariano')) colateral = `¡Bien! Las dietas basadas en plantas reducen tu huella drásticamente.`;
+                else colateral = `Nota: Todo alimento requiere mucha agua y transporte para llegar a tu mesa.`;
+            } 
+            else if (cat === 'agua') {
+                msg = `Consumo: ${impactVal} L de la red.`;
+                if(subName === 'Beber') colateral = `¡El agua es vida! Impacto mínimo (solo procura usar termo en vez de botellas PET).`;
+                else if(subName === 'Ducha') colateral = `Nota: Calentar agua con gas/electricidad es lo que más contamina en una ducha.`;
+                else if(subName.includes('Sanitario')) colateral = `El agua de descarga requiere un proceso largo en plantas de tratamiento residual.`;
+                else colateral = `Nota: Bombear agua potable hasta las ciudades requiere inmensa energía eléctrica.`;
+            }
+            else if (cat === 'transporte') {
+                msg = `Emisiones: ${impactVal} kg de GEI y material particulado.`;
+                if(subName.includes('Camión') || subName.includes('Metro')) colateral = `Impacto Positivo: Usar transporte colectivo siempre será mejor que ir solo en auto.`;
+                else colateral = `Nota: Los gases de combustión generan smog fotoquímico en las ciudades.`;
+            }
+            else if (cat === 'ia') {
+                msg = `Consumo Datacenter: ${impactVal} kg CO2eq procesados.`;
+                colateral = `Nota: Los centros de datos usan muchísima energía 24/7 y agua potable para refrigerar sus servidores.`;
+            }
+            else if (cat === 'residuos') {
+                msg = `Generación: ${impactVal} kg de residuos.`;
+                if(subName.includes('Plástico')) colateral = `Cuidado: Si no se recicla, termina degradándose en microplásticos tóxicos.`;
+                else colateral = `Nota: La basura en vertederos genera lixiviados (jugos tóxicos) y gas metano.`;
+            }
+            else { msg = `Impacto General: ${impactVal} unidades ambientales.`; colateral = `Trata de siempre elegir la alternativa más sustentable.`;}
+            
+            return `<div class="impact-msg"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg><div>${msg}<br><span class="colateral-msg">${colateral}</span></div></div>`;
+        }
+
         function calculateLiveImpact() {
             const amt = parseFloat(document.getElementById('entry-amt').value) || 0;
             const subName = document.getElementById('entry-sub').value;
@@ -831,7 +871,7 @@
                 dbId: 'local_' + Math.random().toString(36).substr(2, 9),
                 cat: window.state.currentCat, catLabel: c.label, subName: subName, amt, unit: c.unit,
                 note: document.getElementById('entry-note').value.trim(), privacy: window.state.privacy, chatarra: [...window.state.chatarra],
-                impactVal: impactVal, impactUnit: c.impUnit,
+                impactVal: impactVal, impactUnit: c.impUnit, impactMsgHTML: generateImpactMessage(window.state.currentCat, subName, amt, impactVal),
                 timestamp: ts,
                 dateStr: new Date(`${dateVal}T${timeVal}`).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' }),
                 timeStr: new Date(`${dateVal}T${timeVal}`).toLocaleTimeString('es-ES', {hour: '2-digit', minute:'2-digit'})
@@ -839,8 +879,8 @@
             
             window.closeEntry();
 
-            // SUBIR A NUBE
-            if(db && currentUser) {
+            // SUBIR A NUBE (Si hay config real)
+            if(db && currentUser && !isFakeFirebase) {
                 try {
                     // 1. Guardado Privado para Mi Historial
                     await addDoc(collection(db, 'artifacts', appId, 'users', currentUser.uid, 'entries'), newEntry);
@@ -859,13 +899,17 @@
                 // MODO LOCAL
                 window.state.entries.unshift(newEntry);
                 window.state.entries.sort((a,b) => b.timestamp - a.timestamp);
+                
+                if (newEntry.privacy !== 'private') {
+                     window.state.feedEntries.unshift({ ...newEntry, authorName: window.state.user.name });
+                }
                 updateAllUI();
             }
         };
 
         window.deleteEntry = async function(dbId) {
             if(confirm('¿Eliminar este registro de forma permanente en tu historial?')) {
-                if(db && currentUser && !dbId.startsWith('local_')) {
+                if(db && currentUser && !dbId.startsWith('local_') && !isFakeFirebase) {
                     try { await deleteDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'entries', dbId)); } 
                     catch(e) { console.warn(e); }
                 } else {
@@ -882,7 +926,7 @@
             
             // 1. Renderizar Mis Grupos
             if(window.state.groups.length === 0) {
-                groupsBox.innerHTML = `<div class="empty-state" style="padding: 10px;"><p>No perteneces a ninguna red todavía.</p></div>`;
+                groupsBox.innerHTML = `<div class="empty-state" style="padding: 10px;"><p>No perteneces a ninguna red. (Requiere Firebase real para invitar/unirse).</p></div>`;
             } else {
                 groupsBox.innerHTML = window.state.groups.map(g => `
                     <div class="card" style="border-left: 4px solid var(--sage); padding: 16px; margin-bottom: 12px;">
@@ -898,21 +942,25 @@
                 `).join('');
             }
 
-            // 2. Renderizar Feed Global de las redes
-            if (!currentUser) {
+            // 2. Renderizar Feed Global (El Muro)
+            if (!window.state.user) {
                 feedBox.innerHTML = `<div class="empty-state"><p>Inicia sesión para ver el muro de actividad.</p></div>`;
                 return;
             }
 
-            // Extraer a todos los miembros de mis redes
-            const myNetworkUids = new Set();
-            window.state.groups.forEach(g => g.members.forEach(uid => myNetworkUids.add(uid)));
-
-            // Filtrar feedEntries: solo los de mi red y que no sean míos
-            const networkFeed = window.state.feedEntries.filter(e => myNetworkUids.has(e.authorId) && e.authorId !== currentUser.uid);
+            let networkFeed = [];
+            
+            if (isFakeFirebase) {
+                // En modo local, solo mostramos el propio muro fake para que pruebes cómo se ve
+                networkFeed = window.state.feedEntries;
+            } else {
+                const myNetworkUids = new Set();
+                window.state.groups.forEach(g => g.members.forEach(uid => myNetworkUids.add(uid)));
+                networkFeed = window.state.feedEntries.filter(e => myNetworkUids.has(e.authorId) && e.authorId !== currentUser.uid);
+            }
 
             if (networkFeed.length === 0) {
-                feedBox.innerHTML = `<div class="empty-state"><div style="font-size:2.5rem; margin-bottom:10px; opacity:0.5;">👀</div><p>Está muy tranquilo por aquí... ¡Nadie ha publicado!</p></div>`;
+                feedBox.innerHTML = `<div class="empty-state"><div style="font-size:2.5rem; margin-bottom:10px; opacity:0.5;">👀</div><p>Aún no hay publicaciones de nadie...</p></div>`;
                 return;
             }
 
@@ -947,7 +995,7 @@
         };
 
         window.createGroup = async function() {
-            if(!db || !currentUser) return alert("Inicia sesión real para usar redes.");
+            if(!db || !currentUser || isFakeFirebase) return alert("Esta función requiere conectarse a Firebase de verdad.");
             const name = prompt('Nombra tu nueva red de Ingeniería Ambiental:');
             if (!name) return;
             const code = Math.random().toString(36).substr(2, 6).toUpperCase();
@@ -960,7 +1008,7 @@
         };
 
         window.joinGroup = async function() {
-            if(!db || !currentUser) return alert("Inicia sesión real para usar redes.");
+            if(!db || !currentUser || isFakeFirebase) return alert("Esta función requiere conectarse a Firebase de verdad.");
             const code = prompt('Ingresa el código de 6 dígitos de la red:');
             if (!code) return;
             const cleanCode = code.toUpperCase().trim();
@@ -997,6 +1045,9 @@
             else if (document.getElementById('page-home').classList.contains('active')) { 
                 updateHomeStats(); updateTimelineList('timeline-home', window.state.entries.slice(0, 5)); 
             }
+            if (document.getElementById('page-groups').classList.contains('active')) { 
+                renderGroups(); 
+            }
             checkAchievements();
         }
 
@@ -1020,9 +1071,9 @@
             if (entriesArr.length === 0) { box.innerHTML = `<div class="empty-state"><div style="font-size:3rem; margin-bottom:16px; opacity:0.3;">🌱</div><p>No tienes registros aquí.</p></div>`; return; }
             box.innerHTML = entriesArr.map(e => {
                 // Indicador de Privacidad en mi historial personal
-                let privIcon = '🌐';
-                if(e.privacy === 'friends') privIcon = '🔒';
-                if(e.privacy === 'private') privIcon = '👻';
+                let privIcon = '🌐 Público';
+                if(e.privacy === 'friends') privIcon = '🔒 Censurado';
+                if(e.privacy === 'private') privIcon = '👻 Privado';
 
                 return `<div class="entry">
                     <button class="delete-btn" onclick="deleteEntry('${e.dbId}')" title="Eliminar registro">✕</button>
@@ -1031,6 +1082,7 @@
                         <span class="entry-amt">${e.amt} <span style="font-size:0.8rem; font-weight:normal;">${e.unit}</span></span>
                     </div>
                     <div class="entry-date">${privIcon} | ${e.dateStr} a las ${e.timeStr} • Impacto: <strong>${e.impactVal} ${e.impactUnit}</strong></div>
+                    ${e.impactMsgHTML || ''}
                     ${e.note ? `<div class="entry-note">"${e.note}"</div>` : ''}
                 </div>`;
             }).join('');
