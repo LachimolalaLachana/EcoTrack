@@ -160,6 +160,7 @@
         ::-webkit-scrollbar-thumb { background: var(--muted); border-radius: 10px; }
     </style>
 </head>
+
 <body>
     <!-- SPLASH -->
     <div id="splash">
@@ -500,13 +501,14 @@
         window.state = { user: null, entries: [], feedEntries: [], currentCat: null, privacy: 'public', theme: 'light', chatarra: [], groups: [], authMode: 'login' };
 
         // [FIREBASE SETUP]
-        const dummyFirebaseConfig = {
-            apiKey: "TU_API_KEY",
-            authDomain: "tu-proyecto.firebaseapp.com",
-            projectId: "tu-proyecto",
-            storageBucket: "tu-proyecto.appspot.com",
-            messagingSenderId: "12345678",
-            appId: "1:12345678:web:abcde"
+         const firebaseConfig = {
+             apiKey: "AIzaSyBmp0xTRJBdtEJJrJVbPgrBWOEkWCcZfYo",
+             authDomain: "ecotrack-c42b7.firebaseapp.com",
+             projectId: "ecotrack-c42b7",
+             storageBucket: "ecotrack-c42b7.firebasestorage.app",
+             messagingSenderId: "308583022462",
+             appId: "1:308583022462:web:b1c47aa7e6078a6e563d2f",
+              measurementId: "G-TN2RCS7QZT"
         };
         const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : dummyFirebaseConfig;
         
