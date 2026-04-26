@@ -500,39 +500,31 @@
 
         window.state = { user: null, entries: [], feedEntries: [], currentCat: null, privacy: 'public', theme: 'light', chatarra: [], groups: [], authMode: 'login' };
 
-        // [FIREBASE SETUP] - SE ARREGLA LA DOBLE DECLARACIÓN AQUI
-        let finalFirebaseConfig;
+        // [FIREBASE SETUP - REPARADO]
+         const firebaseConfig = {
+             apiKey: "AIzaSyBmp0xTRJBdtEJJrJVbPgrBWOEkWCcZfYo",
+             authDomain: "ecotrack-c42b7.firebaseapp.com",
+             projectId: "ecotrack-c42b7",
+             storageBucket: "ecotrack-c42b7.firebasestorage.app",
+             messagingSenderId: "308583022462",
+             appId: "1:308583022462:web:b1c47aa7e6078a6e563d2f",
+             measurementId: "G-TN2RCS7QZT"
+        };
 
-        if (typeof __firebase_config !== 'undefined') {
-            finalFirebaseConfig = JSON.parse(__firebase_config);
-        } else {
-            // Usa tu propia configuración si lo abres localmente en tu PC (C:/...)
-             const firebaseConfig = {
-                 apiKey: "AIzaSyBmp0xTRJBdtEJJrJVbPgrBWOEkWCcZfYo",
-                 authDomain: "ecotrack-c42b7.firebaseapp.com",
-                 projectId: "ecotrack-c42b7",
-                  storageBucket: "ecotrack-c42b7.firebasestorage.app",
-                 messagingSenderId: "308583022462",
-                 appId: "1:308583022462:web:b1c47aa7e6078a6e563d2f",
-                 measurementId: "G-TN2RCS7QZT"
-             };
-        }
-        
-        // Trampa para evitar el error feo de "api-key-not-valid" si corres este codigo literal con los corchetes
-        const isFakeFirebase = !finalFirebaseConfig.apiKey || finalFirebaseConfig.apiKey.includes("borro por seguridad");
+        // Forzamos modo real ya que tienes tus llaves
+        const isFakeFirebase = false; 
 
         let app, auth, db;
-        if (!isFakeFirebase) {
-            try {
-                app = initializeApp(finalFirebaseConfig);
-                auth = getAuth(app);
-                db = getFirestore(app);
-            } catch(e) {
-                console.warn("Error Firebase:", e);
-            }
+        try {
+            app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+            console.log("🔥 EcoTrack conectado a Firebase");
+        } catch(e) {
+            console.error("Error al inicializar:", e);
         }
 
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const appId = 'ecotrack-pro-unam'; // ID interno para tus datos
         let currentUser = null;
         let listenersUnsubscribe = [];
 
