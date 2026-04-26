@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0d3328">
+    <title>EcoTrack Pro - Ing. Ambiental</title>
+    
+    <!-- Librerías Externas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%231a5f4a'/%3E%3Cpath d='M50 25 C30 25 25 50 25 50 C25 70 35 80 50 80 C65 80 75 70 75 50 C75 50 70 25 50 25 Z M50 70 C40 70 35 60 35 50 C35 40 40 35 50 35 C60 35 65 40 65 50 C65 60 60 70 50 70' fill='%235fc9a8'/%3E%3Cpath d='M50 30 Q40 45 50 75 Q60 45 50 30' fill='%23a8e6cf'/%3E%3C/svg%3E">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        :root {
+            --bg: #f0f7f4; --card: rgba(255, 255, 255, 0.85); --text: #0d3328; --text-light: #1a5f4a;
+            --muted: #5a8a7a; --accent: #e85d4e; --sage: #2d8a6e; --mint: #5fc9a8; --amber: #e9c46a;
+            --border: rgba(13, 51, 40, 0.1); --shadow: 0 8px 32px rgba(13, 51, 40, 0.05);
+        }
+        
+        [data-theme="dark"] {
+            --bg: #0a1a15; --card: rgba(18, 43, 34, 0.9); --text: #e8f5f0; --text-light: #a8e6cf;
+            --muted: #7ab3a0; --accent: #ff7b6b; --sage: #5fc9a8; --mint: #7dd3c0; --amber: #f4d03f;
+            --border: rgba(168, 230, 207, 0.15); --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; transition: background-color 0.3s ease, color 0.3s ease; }
+        
+        /* SPLASH */
+        #splash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #1a5f4a, #2d8a6e); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10000; transition: opacity 0.5s, visibility 0.5s; }
+        #splash.hidden { opacity: 0; visibility: hidden; }
+        .splash-logo { width: 120px; height: 120px; animation: pulse 2s ease-in-out infinite; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        .splash-text { color: white; font-size: 2rem; font-weight: 700; margin-top: 20px; }
+        
+        /* CONTAINERS */
+        .app-container { max-width: 800px; margin: 0 auto; padding: 20px 20px 100px; display: none; }
+        .app-container.active { display: block; animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* HEADER */
+        .app-header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; padding-top: 10px; }
+        .logo-icon { width: 48px; height: 48px; }
+        .logo-text { font-size: 1.5rem; font-weight: 700; color: var(--text); }
+        .header-actions { margin-left: auto; display: flex; gap: 8px; }
+        .icon-btn { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--border); background: var(--card); cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text); transition: all 0.2s; box-shadow: var(--shadow); }
+        .icon-btn:hover { transform: scale(1.05); }
+        
+        /* CARDS */
+        .card { background: var(--card); border-radius: 24px; padding: 24px; margin-bottom: 20px; border: 1px solid var(--border); backdrop-filter: blur(10px); box-shadow: var(--shadow); transition: background-color 0.3s ease; }
+        .card-hero { background: linear-gradient(135deg, var(--sage), var(--mint)); color: white; border: none; }
+        .card-hero h1, .card-hero p, .card-hero h2 { color: white; }
+        h1 { font-size: 2rem; font-weight: 700; margin-bottom: 8px; }
+        h3 { font-weight: 700; color: var(--text); }
+        p { color: var(--muted); line-height: 1.6; }
+        
+        /* FORM & BUTTONS */
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-size: 0.9rem; font-weight: 600; margin-bottom: 8px; color: var(--text-light); }
+        input, select, textarea { width: 100%; padding: 14px 16px; border: 2px solid var(--border); border-radius: 16px; font-size: 1rem; background: var(--bg); color: var(--text); font-family: inherit; transition: border-color 0.3s; }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--sage); }
+        .helper-text { display: block; font-size: 0.8rem; color: var(--muted); margin-top: 6px; font-style: italic; }
+        .btn { width: 100%; padding: 16px; border: none; border-radius: 16px; font-size: 1.05rem; font-weight: 700; cursor: pointer; transition: all 0.2s; font-family: inherit; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .btn:active { transform: scale(0.98); }
+        .btn-primary { background: linear-gradient(135deg, var(--accent), var(--amber)); color: white; box-shadow: 0 8px 20px rgba(232,93,78,0.3); }
+        .btn-secondary { background: var(--border); color: var(--text); font-weight: 600; }
+        .btn-green { background: var(--sage); color: white; box-shadow: 0 8px 20px rgba(45, 138, 110, 0.3); }
+        
+        /* STATS (Scrollable for Home) */
+        .stats-row { display: flex; overflow-x: auto; gap: 15px; margin-top: 24px; padding-bottom: 10px; scroll-snap-type: x mandatory; }
+        .stats-row::-webkit-scrollbar { height: 4px; }
+        .stats-row::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+        .stat-box { min-width: 110px; flex: 1; text-align: center; padding: 16px; background: rgba(255,255,255,0.15); border-radius: 16px; backdrop-filter: blur(5px); scroll-snap-align: start; }
+        .stat-value { font-size: 1.4rem; font-weight: 800; color: white; }
+        .stat-label { font-size: 0.7rem; color: rgba(255,255,255,0.9); text-transform: uppercase; margin-top: 4px; font-weight: 600; }
+        
+        /* CHIPS */
+        .chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+        .chip { display: flex; align-items: center; gap: 8px; padding: 12px 18px; background: var(--card); border-radius: 50px; border: 1px solid var(--border); cursor: pointer; transition: all 0.2s; font-size: 0.95rem; font-weight: 600; color: var(--text); user-select: none; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .chip:hover { transform: translateY(-2px); border-color: var(--sage); color: var(--sage); }
+        .chip.active-chatarra { background: var(--sage); color: white; border-color: var(--sage); }
+        
+        /* TIMELINE (CANDADO DE SCROLL) */
+        .timeline { position: relative; padding-left: 24px; }
+        .timeline::before { content: ''; position: absolute; left: 8px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, var(--sage), transparent); }
+        #timeline-history { max-height: 300px; overflow-y: auto; padding-right: 12px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+        #timeline-history::-webkit-scrollbar { width: 6px; }
+        #timeline-history::-webkit-scrollbar-track { background: transparent; }
+        #timeline-history::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+        #timeline-history::-webkit-scrollbar-thumb:hover { background: var(--sage); }
+        .entry { position: relative; margin-bottom: 16px; padding: 16px; background: var(--card); border-radius: 16px; border: 1px solid var(--border); box-shadow: var(--shadow); transition: transform 0.2s; }
+        .entry:hover { transform: translateX(4px); }
+        .entry::before { content: ''; position: absolute; left: -20px; top: 20px; width: 12px; height: 12px; background: var(--bg); border: 3px solid var(--sage); border-radius: 50%; }
+        .entry-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; padding-right: 24px; }
+        .entry-cat { font-weight: 700; color: var(--sage); display: flex; align-items: center; gap: 6px;}
+        .entry-amt { font-size: 1.1rem; font-weight: 800; color: var(--accent); }
+        .entry-date { font-size: 0.8rem; color: var(--muted); font-weight: 500;}
+        .entry-note { font-style: italic; color: var(--text); font-size: 0.9rem; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); }
+        
+        /* DATOS MAMONES (COLATERAL) */
+        .impact-msg { background: rgba(45, 138, 110, 0.08); border-left: 3px solid var(--sage); padding: 10px 12px; margin-top: 12px; border-radius: 4px 10px 10px 4px; font-size: 0.85rem; color: var(--text); display: flex; gap: 10px; align-items: flex-start; line-height: 1.4; }
+        .impact-msg svg { min-width: 16px; margin-top: 2px; color: var(--sage); }
+        .colateral-msg { margin-top: 6px; font-size: 0.8rem; color: var(--accent); font-weight: 600; display: block; }
+        .delete-btn { position: absolute; top: 16px; right: 16px; background: none; border: none; color: var(--muted); cursor: pointer; font-size: 1.2rem; transition: color 0.2s; }
+        .delete-btn:hover { color: var(--accent); }
+
+        /* PHOTO PREVIEW */
+        .photo-box { border: 2px dashed var(--border); padding: 20px; text-align: center; border-radius: 12px; cursor: pointer; display: block; transition: border-color 0.2s; }
+        .photo-box:hover { border-color: var(--sage); background: rgba(45, 138, 110, 0.05); }
+        .photo-preview { display: none; width: 100%; max-height: 200px; border-radius: 12px; margin-top: 10px; object-fit: cover; }
+
+        /* NAVIGATION */
+        .bottom-nav { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; padding: 10px; background: var(--card); border-radius: 50px; border: 1px solid var(--border); box-shadow: 0 10px 40px rgba(0,0,0,0.15); backdrop-filter: blur(20px); z-index: 100; width: 90%; max-width: 400px; justify-content: space-between; }
+        .nav-btn { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 12px; border-radius: 16px; border: none; background: transparent; cursor: pointer; font-size: 0.75rem; font-weight: 700; color: var(--muted); transition: all 0.3s; font-family: inherit; flex: 1; }
+        .nav-btn.active { color: var(--sage); background: rgba(45, 138, 110, 0.1); }
+        .nav-btn svg { transition: transform 0.3s; }
+        .nav-btn.active svg { transform: translateY(-2px); }
+        
+        /* MODAL */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
+        .modal-overlay.active { display: flex; animation: fadeIn 0.2s ease; }
+        .modal-content { background: var(--card); border-radius: 24px; padding: 24px; width: 100%; max-width: 450px; max-height: 85vh; overflow-y: auto; border: 1px solid var(--border); animation: modalIn 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+        @keyframes modalIn { from { opacity: 0; transform: scale(0.95) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .modal-title { font-size: 1.3rem; font-weight: 800; color: var(--text); display:flex; align-items:center; gap:8px;}
+        .close-btn { width: 36px; height: 36px; border-radius: 50%; border: none; background: var(--border); cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text); font-weight: bold; }
+        
+        .datetime-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .privacy-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+        .priv-btn { flex: 1; min-width: 90px; padding: 10px; border-radius: 12px; border: 2px solid var(--border); background: transparent; cursor: pointer; font-size: 0.9rem; font-weight: 700; color: var(--text); transition: all 0.2s; }
+        .priv-btn.active { background: var(--sage); color: white; border-color: var(--sage); box-shadow: 0 4px 10px rgba(45,138,110,0.2); }
+        
+        .toggle-row { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 1px solid var(--border); }
+        .toggle { width: 50px; height: 26px; background: var(--border); border-radius: 13px; position: relative; cursor: pointer; transition: background 0.3s; }
+        .toggle.active { background: var(--sage); }
+        .toggle::after { content: ''; position: absolute; width: 22px; height: 22px; background: white; border-radius: 50%; top: 2px; left: 2px; transition: transform 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .toggle.active::after { transform: translateX(24px); }
+        
+        .hidden { display: none !important; }
+        .empty-state { text-align: center; padding: 40px 20px; color: var(--muted); }
+        .chatarra-section { display: none; margin-top: 16px; padding: 16px; background: rgba(232,93,78,0.05); border-radius: 16px; }
+        .chatarra-section.active { display: block; }
+        .modal-content::-webkit-scrollbar { width: 6px; }
+        .modal-content::-webkit-scrollbar-track { background: transparent; }
+        .modal-content::-webkit-scrollbar-thumb { background: var(--muted); border-radius: 10px; }
+    </style>
+</head>
+<body>
+    <!-- SPLASH -->
+    <div id="splash">
+        <div class="splash-logo">
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="50" cy="50" r="45" fill="#1a5f4a"/>
+                <path d="M50 20 C30 20 20 40 20 50 C20 70 35 85 50 85 C65 85 80 70 80 50 C80 40 70 20 50 20 Z" fill="#2d8a6e"/>
+                <path d="M50 30 C38 30 32 42 32 50 C32 62 40 72 50 72 C60 72 68 62 68 50 C68 42 62 30 50 30 Z" fill="#5fc9a8"/>
+                <path d="M50 35 Q45 50 50 70 Q55 50 50 35" fill="#a8e6cf"/>
+            </svg>
+        </div>
+        <div class="splash-text">EcoTrack Pro</div>
+    </div>
+
+    <!-- AUTH (PERFIL EN LA NUBE) -->
+    <div id="screen-auth" class="app-container hidden">
+        <div style="min-height: 80vh; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+            <div style="width: 100px; height: 100px; margin-bottom: 24px;">
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="50" r="45" fill="#1a5f4a"/>
+                    <path d="M50 20 C30 20 20 40 20 50 C20 70 35 85 50 85 C65 85 80 70 80 50 C80 40 70 20 50 20 Z" fill="#2d8a6e"/>
+                    <path d="M50 30 C38 30 32 42 32 50 C32 62 40 72 50 72 C60 72 68 62 68 50 C68 42 62 30 50 30 Z" fill="#5fc9a8"/>
+                    <path d="M50 35 Q45 50 50 70 Q55 50 50 35" fill="#a8e6cf"/>
+                </svg>
+            </div>
+            <h1 style="margin-bottom: 8px;">Crea tu Perfil</h1>
+            <p style="margin-bottom: 8px; text-align:center;">Tu cuenta está vinculada de forma segura.</p>
+            <p style="margin-bottom: 32px; text-align:center; color: var(--sage); font-weight: bold; font-size: 0.9rem;">🔒 Tus datos se respaldarán en la nube.</p>
+            
+            <div class="card" style="width: 100%; max-width: 400px;">
+                <div class="form-group">
+                    <label>¿Cómo te llamas?</label>
+                    <input type="text" id="input-name" placeholder="Tu nombre o apodo">
+                </div>
+                <div class="form-group">
+                    <label>Correo (opcional)</label>
+                    <input type="email" id="input-email" placeholder="email@ejemplo.com">
+                </div>
+                <button class="btn btn-primary" onclick="login()">Guardar Perfil y Entrar →</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN APP -->
+    <div id="app-main" class="hidden">
+        <!-- HEADER COMPARTIDO -->
+        <div class="app-header" style="padding: 0 20px; max-width: 800px; margin: 10px auto 20px;">
+            <div class="logo-icon">
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="#1a5f4a"/><path d="M50 20 C30 20 20 40 20 50 C20 70 35 85 50 85 C65 85 80 70 80 50 C80 40 70 20 50 20 Z" fill="#2d8a6e"/><path d="M50 30 C38 30 32 42 32 50 C32 62 40 72 50 72 C60 72 68 62 68 50 C68 42 62 30 50 30 Z" fill="#5fc9a8"/><path d="M50 35 Q45 50 50 70 Q55 50 50 35" fill="#a8e6cf"/></svg>
+            </div>
+            <div class="logo-text">EcoTrack ☁️</div>
+            <div class="header-actions">
+                <button class="icon-btn" onclick="toggleTheme()" title="Cambiar Tema">
+                    <svg id="icon-theme" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-3.03 0-5.5-2.47-5.5-5.5 0-1.82.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/></svg>
+                </button>
+                <button class="icon-btn" onclick="openSettings()" title="Ajustes">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L3.07 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.79-3.6-3.6s1.79-3.6 3.6-3.6 3.6 1.79 3.6 3.6-1.79 3.6-3.6 3.6z"/></svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- SCREEN: HOME -->
+        <div id="page-home" class="app-container active" style="padding-top:0;">
+            <div class="card card-hero">
+                <p style="text-transform: uppercase; letter-spacing: 1px; font-size: 0.8rem; opacity: 0.9; margin-bottom: 4px;">Bienvenido de vuelta</p>
+                <h1>¡Hola, <span id="user-name">EcoAmigo</span>! 👋</h1>
+                <p>Resumen de tu jornada • 🔥 Racha activa</p>
+                <div class="stats-row">
+                    <div class="stat-box">
+                        <div class="stat-value" id="stat-entries">0</div>
+                        <div class="stat-label">Eventos Hoy</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="stat-emisiones">0</div>
+                        <div class="stat-label">kg CO₂eq Hoy</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="stat-agua">0</div>
+                        <div class="stat-label">L Agua Hoy</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="stat-residuos">0</div>
+                        <div class="stat-label">kg Basura Hoy</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 style="margin-bottom: 16px;">✨ ¿Qué vas a documentar?</h3>
+                <div class="chips" id="home-category-chips">
+                    <!-- Dinámico -->
+                </div>
+            </div>
+
+            <div class="card" style="margin-bottom: 0;">
+                <h3 style="margin-bottom: 16px;">📝 Últimos registros (Sincronizado)</h3>
+                <div class="timeline" id="timeline-home">
+                    <!-- Dinámico -->
+                </div>
+            </div>
+        </div>
+
+        <!-- SCREEN: HISTORY -->
+        <div id="page-history" class="app-container hidden" style="padding-top:0;">
+            <div class="card">
+                <h3 style="margin-bottom: 16px;">📤 Exportar Reportes (Ing. Ambiental)</h3>
+                <p style="margin-bottom: 16px; color: var(--muted); font-size: 0.9rem;">Tus datos contienen las unidades de medida reales y los análisis colaterales:</p>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+                    <button class="btn btn-green" onclick="exportData('excel')">📊 Excel (XLSX)</button>
+                    <button class="btn btn-primary" onclick="exportData('pdf')" style="background:var(--accent);">📑 PDF</button>
+                    <button class="btn btn-secondary" onclick="exportData('csv')">📄 CSV</button>
+                    <button class="btn btn-secondary" onclick="exportData('json')">💾 JSON</button>
+                </div>
+            </div>
+
+            <div class="card" style="margin-bottom: 0;">
+                <h3 style="margin-bottom: 16px;">📚 Historial completo en la Nube</h3>
+                <div class="timeline" id="timeline-history">
+                    <!-- Historial con límite de altura -->
+                </div>
+            </div>
+        </div>
+
+        <!-- SCREEN: STATS & ACHIEVEMENTS -->
+        <div id="page-stats" class="app-container hidden" style="padding-top:0;">
+            <div class="card card-hero">
+                <h2 style="color: white; margin-bottom: 16px;">📊 Análisis Total Histórico</h2>
+                <div class="stats-row" style="margin-top:0;">
+                    <div class="stat-box">
+                        <div class="stat-value" id="total-entries">0</div>
+                        <div class="stat-label">Total regs.</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="total-carbon">0</div>
+                        <div class="stat-label">Total CO₂ (kg)</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="streak-days">0</div>
+                        <div class="stat-label">Días Activos</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LOGROS -->
+            <div class="card">
+                <h3 style="margin-bottom: 16px;">🏆 Logros de Sostenibilidad</h3>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+                    <div style="padding: 16px; background: rgba(95,201,168,0.1); border-radius: 16px; text-align: center;">
+                        <div style="font-size: 2rem; margin-bottom: 8px;">🌱</div>
+                        <div style="font-weight: 700; color: var(--sage);">Primer Paso</div>
+                        <div style="font-size: 0.85rem; color: var(--muted);">Comenzaste a medir</div>
+                    </div>
+                    <div id="achieve-agua" style="padding: 16px; background: rgba(232,93,78,0.1); border-radius: 16px; text-align: center; opacity: 0.5;">
+                        <div style="font-size: 2rem; margin-bottom: 8px;">💧</div>
+                        <div style="font-weight: 700;">Guardián Hídrico</div>
+                        <div style="font-size: 0.85rem; color: var(--muted);">Bloqueado (Registra agua)</div>
+                    </div>
+                    <div id="achieve-ia" style="padding: 16px; background: rgba(232,93,78,0.1); border-radius: 16px; text-align: center; opacity: 0.5; grid-column: span 2;">
+                        <div style="font-size: 2rem; margin-bottom: 8px;">🤖</div>
+                        <div style="font-weight: 700;">Consciencia Artificial</div>
+                        <div style="font-size: 0.85rem; color: var(--muted);">Bloqueado (Registra uso de IA)</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 style="margin-bottom: 16px; text-align: center;">🥧 Eventos por Categoría</h3>
+                <div style="max-width: 300px; margin: 0 auto;">
+                    <canvas id="stats-chart" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCREEN: GROUPS (MULTIJUGADOR REAL) -->
+        <div id="page-groups" class="app-container hidden" style="padding-top:0;">
+            <div class="card card-hero">
+                <h2 style="color:white; margin-bottom:16px;">👥 Redes de Ingeniería</h2>
+                <p style="color:rgba(255,255,255,0.9); margin-bottom: 16px; font-size: 0.9rem;">Tus grupos se sincronizan en tiempo real.</p>
+                <div style="display:flex; gap:10px;">
+                    <button class="btn btn-primary" style="flex:1; background:white; color:var(--text);" onclick="createGroup()">+ Crear Red</button>
+                    <button class="btn btn-secondary" style="flex:1; border:1px solid white; color:white; background:transparent;" onclick="joinGroup()">🔗 Unirse</button>
+                </div>
+            </div>
+            <div id="groups-container">
+                <!-- Dinámico -->
+            </div>
+        </div>
+
+        <!-- BOTTOM NAVIGATION -->
+        <nav class="bottom-nav">
+            <button class="nav-btn active" onclick="navigateTo('home')" id="nav-home">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                Inicio
+            </button>
+            <button class="nav-btn" onclick="navigateTo('history')" id="nav-history">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                Historial
+            </button>
+            <button class="nav-btn" onclick="navigateTo('stats')" id="nav-stats">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                Análisis
+            </button>
+            <button class="nav-btn" onclick="navigateTo('groups')" id="nav-groups">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                Redes
+            </button>
+        </nav>
+    </div>
+
+    <!-- MODAL ENTRY CON OVERRIDE DINÁMICO Y FOTO -->
+    <div class="modal-overlay" id="modal-entry" onclick="if(event.target===this) closeEntry()">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="entry-title">Nuevo registro</h3>
+                <button class="close-btn" onclick="closeEntry()">✕</button>
+            </div>
+
+            <div class="datetime-row">
+                <div class="form-group">
+                    <label>📅 Fecha</label>
+                    <input type="date" id="entry-date">
+                </div>
+                <div class="form-group">
+                    <label>🕐 Hora</label>
+                    <input type="time" id="entry-time">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Subcategoría</label>
+                <select id="entry-sub" onchange="updateUnitsHelper()">
+                    <option value="">Selecciona...</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label id="amt-label">Cantidad Estándar</label>
+                <input type="number" id="entry-amt" placeholder="Ej. 0.25" step="0.01" min="0">
+                <span id="amt-helper" class="helper-text">Ej: Usa proporciones si no tienes báscula.</span>
+            </div>
+
+            <!-- OVERRIDE DE IMPACTO -->
+            <div class="form-group" style="padding: 12px; background: rgba(95,201,168,0.15); border-radius: 12px; border: 1px dashed var(--sage);">
+                <label id="override-label" style="color: var(--sage); margin-bottom: 4px;">💡 Impacto Calculado <small style="font-weight:normal;">[Editable]</small></label>
+                <input type="number" id="entry-carbon-override" step="0.001" min="0" style="background: var(--card); border-color: var(--sage);">
+                <span class="helper-text" style="color: var(--sage);">Calculado en tiempo real, pero puedes modificar el valor exacto.</span>
+            </div>
+
+            <div class="chatarra-section" id="chatarra-box">
+                <label style="color:var(--accent);">⚠️ Añadir factores de ultraprocesados:</label>
+                <div class="chips" style="margin-top: 8px;">
+                    <div class="chip" onclick="toggleChatarra(this, 'takis')">🌶️ Frituras</div>
+                    <div class="chip" onclick="toggleChatarra(this, 'refresco')">🥤 Refresco</div>
+                    <div class="chip" onclick="toggleChatarra(this, 'dulces')">🍬 Dulces / Pan</div>
+                </div>
+            </div>
+
+            <!-- FOTO / EVIDENCIA -->
+            <div class="form-group">
+                <label>📸 Evidencia Visual (Opcional)</label>
+                <label class="photo-box">
+                    <input type="file" accept="image/*" style="display: none;" onchange="previewPhoto(this)" capture="environment">
+                    <div style="font-weight: 600; color: var(--text);">📷 Toca para adjuntar evidencia visual</div>
+                </label>
+                <img id="photo-preview" class="photo-preview">
+            </div>
+
+            <div class="form-group" style="margin-top: 16px;">
+                <label>📝 Notas</label>
+                <textarea id="entry-note" rows="2" placeholder="Describe brevemente el evento..." style="resize: vertical;"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>🔒 Visibilidad</label>
+                <div class="privacy-btns">
+                    <button class="priv-btn active" onclick="setPrivacy('public')" id="btn-pub">🌐 Público</button>
+                    <button class="priv-btn" onclick="setPrivacy('friends')" id="btn-friend">👥 Amigos</button>
+                    <button class="priv-btn" onclick="setPrivacy('private')" id="btn-priv">🔒 Privado</button>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 12px; margin-top: 24px;">
+                <button class="btn btn-secondary" style="flex: 1;" onclick="closeEntry()">Cancelar</button>
+                <button class="btn btn-primary" style="flex: 2;" onclick="saveEntry()">Guardar y Subir</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL SETTINGS -->
+    <div class="modal-overlay" id="modal-settings" onclick="if(event.target===this) closeSettings()">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Ajustes Generales</h3>
+                <button class="close-btn" onclick="closeSettings()">✕</button>
+            </div>
+            <div class="toggle-row">
+                <span style="font-weight: 600;">🌙 Modo oscuro</span>
+                <div class="toggle" id="toggle-theme" onclick="toggleTheme()"></div>
+            </div>
+            <button class="btn mt" onclick="clearData()" style="background: rgba(232,93,78,0.1); color: var(--accent); border: 1px solid var(--accent);">
+                🗑️ Borrar mi cuenta y datos en la Nube
+            </button>
+        </div>
+    </div>
+
+    <!-- SCRIPT TIPO MÓDULO PARA FIREBASE V11 -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, getDocs, onSnapshot, addDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global State
+        window.state = { user: null, entries: [], currentCat: null, privacy: 'public', theme: 'light', chatarra: [], groups: [] };
+
+        // [FIREBASE SETUP]
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        let currentUser = null;
+
+        // Iconos SVG limpios
+        const svgs = {
+            agua: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>`,
+            energia: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`,
+            transporte: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="8" rx="2"/><circle cx="7" cy="19" r="2"/><circle cx="17" cy="19" r="2"/><path d="M5 11l1.5-4.5h11L19 11"/></svg>`,
+            comida: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 4 13c0-3.5 2-6 4-8 2 2 4 4.5 4 8a7 7 0 0 1-7 7z"/></svg>`,
+            residuos: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>`,
+            compras: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>`,
+            ia: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a2 2 0 0 1 2 2c0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2zm0 16a2 2 0 0 1 2 2c0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2zM4 10a2 2 0 0 1 2 2c0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2zm16 0a2 2 0 0 1 2 2c0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2z"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>`,
+            digital: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>`,
+            otros: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`
+        };
+
+        const cats = {
+            agua: { icon: svgs.agua, label: 'Agua', unit: 'L', impUnit: 'L (Agotamiento/Residual)', hint: '1 Vaso ≈ 0.25L | 1 Ducha ≈ 40L', subs: ['Beber', 'Sanitario', 'Ducha', 'Lavarse Cara/Manos', 'Cocinar', 'Otro'], factor: 1 },
+            energia: { icon: svgs.energia, label: 'Energía', unit: 'kWh', impUnit: 'kg CO₂eq', hint: '1 hora de TV ≈ 0.1 kWh', subs: ['Electricidad general', 'Climatización', 'Electrodomésticos', 'Gas', 'Otro'], factor: 0.5 },
+            transporte: { icon: svgs.transporte, label: 'Transporte', unit: 'km', impUnit: 'kg CO₂ + PM2.5', hint: 'Estima los km de tu viaje', subs: ['Auto gas/diesel', 'Auto eléctrico', 'Camión/Microbús', 'Metro/Pumabus', 'Bici/Caminar', 'Otro'], factor: { 'Auto gas/diesel': 0.21, 'Auto eléctrico': 0.05, 'Camión/Microbús': 0.15, 'Metro/Pumabus': 0.05, 'Bici/Caminar': 0, 'Otro': 0.15 } },
+            comida: { icon: svgs.comida, label: 'Comida', unit: 'kg', impUnit: 'L (Agua Virtual) / kg GEI', hint: '1 Taco ≈ 0.05kg | Sincronizada ≈ 0.1kg', subs: ['Carne res/roja', 'Pollo/Cerdo', 'Pescado', 'Huevos/Lácteos', 'Pizza/Comida rápida', 'Vegetariano/Vegano', 'Local/Casero', 'Otro'], factor: { 'Carne res/roja': 15000, 'Pollo/Cerdo': 4000, 'Pescado': 2000, 'Huevos/Lácteos': 3000, 'Pizza/Comida rápida': 5000, 'Vegetariano/Vegano': 1000, 'Local/Casero': 800, 'Otro': 2000 }, hasChatarra: true },
+            residuos: { icon: svgs.residuos, label: 'Residuos', unit: 'kg', impUnit: 'kg (Basura sólida/Metano)', hint: '1 Bolsa chica ≈ 1.5kg', subs: ['Basura Mixta', 'Orgánica', 'Plástico/PET', 'Papel/Cartón', 'Vidrio/Metal', 'Otro'], factor: 1 },
+            compras: { icon: svgs.compras, label: 'Compras', unit: 'uds', impUnit: 'kg (Material Extraído)', hint: 'Cantidad de artículos', subs: ['Ropa nueva', 'Electrónica', 'Plásticos de un uso', 'Local/Artesanal', 'Segunda mano', 'Otro'], factor: { 'Ropa nueva': 15, 'Electrónica': 50, 'Plásticos de un uso': 2, 'Local/Artesanal': 1, 'Segunda mano': 0.5, 'Otro': 5 } },
+            ia: { icon: svgs.ia, label: 'Uso de IA', unit: 'Prompts/Imágenes', impUnit: 'kg CO₂eq (Servidores)', hint: '1 Img ≈ 0.005kg CO2 | 1 Consulta Texto ≈ 0.0005kg CO2', subs: ['Generación de Imágenes', 'Consultas Matemáticas/Lógica', 'Generación de Texto/Código', 'Chat/Voz (Largo)', 'Otro'], factor: { 'Generación de Imágenes': 0.005, 'Consultas Matemáticas/Lógica': 0.001, 'Generación de Texto/Código': 0.0005, 'Chat/Voz (Largo)': 0.002, 'Otro': 0.001} },
+            digital: { icon: svgs.digital, label: 'Digital', unit: 'hrs', impUnit: 'kg CO₂eq', hint: 'Horas frente a pantalla o stream', subs: ['Streaming (Netflix/YT)', 'Redes Sociales', 'Gaming', 'Videollamadas', 'Trabajo offline', 'Otro'], factor: 0.05 },
+            otros: { icon: svgs.otros, label: 'Otros', unit: 'uds', impUnit: 'Valor Mixto', hint: 'Servicios o items misceláneos', subs: ['Limpieza hogar', 'Cosméticos', 'Mascotas', 'Papelería', 'Otro'], factor: 1 }
+        };
+
+        let chartHistoryObj = null;
+        let chartStatsObj = null;
+
+        // INICIALIZACIÓN
+        window.onload = () => {
+            renderCategoryChips();
+            const savedTheme = localStorage.getItem('ecotrack_theme');
+            if (savedTheme === 'dark') applyDarkThemeUI();
+
+            // Firebase Auth
+            const initAuth = async () => {
+                try {
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                } catch (e) { console.error("Error Auth", e); }
+            };
+            initAuth();
+
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    currentUser = user;
+                    const profileRef = doc(db, 'artifacts', appId, 'users', user.uid, 'profile', 'info');
+                    const profileSnap = await getDoc(profileRef);
+
+                    setTimeout(() => { document.getElementById('splash').classList.add('hidden'); }, 800);
+
+                    if (profileSnap.exists()) {
+                        window.state.user = profileSnap.data();
+                        document.getElementById('screen-auth').classList.add('hidden');
+                        document.getElementById('app-main').classList.remove('hidden');
+                        document.getElementById('user-name').textContent = window.state.user.name;
+                        startRealtimeListeners();
+                    } else {
+                        // Nuevo usuario, debe registrarse
+                        document.getElementById('screen-auth').classList.remove('hidden');
+                        document.getElementById('screen-auth').classList.add('active');
+                    }
+                }
+            });
+
+            document.getElementById('entry-amt').addEventListener('input', calculateLiveImpact);
+        };
+
+        function renderCategoryChips() {
+            document.getElementById('home-category-chips').innerHTML = Object.keys(cats).map(key => `
+                <div class="chip" onclick="openEntry('${key}')">${cats[key].icon} ${cats[key].label}</div>
+            `).join('');
+        }
+
+        // LISTENERS EN TIEMPO REAL (NUBE)
+        function startRealtimeListeners() {
+            if (!currentUser) return;
+            
+            // 1. Entradas (Privadas)
+            const entriesRef = collection(db, 'artifacts', appId, 'users', currentUser.uid, 'entries');
+            onSnapshot(entriesRef, (snapshot) => {
+                window.state.entries = [];
+                snapshot.forEach(d => window.state.entries.push({ dbId: d.id, ...d.data() }));
+                window.state.entries.sort((a,b) => b.timestamp - a.timestamp);
+                updateAllUI();
+            }, (err) => console.error("Error entries:", err));
+
+            // 2. Grupos (Públicos) - Fetch all public groups and filter in memory as per RULE 2
+            const groupsRef = collection(db, 'artifacts', appId, 'public', 'data', 'groups');
+            onSnapshot(groupsRef, (snapshot) => {
+                const allGroups = [];
+                snapshot.forEach(d => allGroups.push(d.data()));
+                window.state.groups = allGroups.filter(g => g.members && g.members.includes(currentUser.uid));
+                if (document.getElementById('page-groups').classList.contains('active')) renderGroups();
+            }, (err) => console.error("Error groups:", err));
+        }
+
+        function updateAllUI() {
+            const isHistory = document.getElementById('page-history').classList.contains('active');
+            const isStats = document.getElementById('page-stats').classList.contains('active');
+            const isHome = document.getElementById('page-home').classList.contains('active');
+
+            if (isHistory) { updateTimelineList('timeline-history', window.state.entries); updateHistoryChart(); }
+            else if (isStats) { updateStatsPage(); updateStatsChart(); }
+            else if (isHome) { updateHomeStats(); updateTimelineList('timeline-home', window.state.entries.slice(0, 5)); }
+            checkAchievements();
+        }
+
+        // FUNCIONES GLOBALES ASIGNADAS A WINDOW PARA USO EN EL HTML
+        window.login = async function() {
+            const name = document.getElementById('input-name').value.trim();
+            if (!name) return alert('Por favor, ingresa tu nombre.');
+            
+            const profileData = { name, email: document.getElementById('input-email').value, joined: new Date().toISOString() };
+            await setDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'profile', 'info'), profileData);
+            
+            window.state.user = profileData;
+            document.getElementById('screen-auth').classList.add('hidden');
+            document.getElementById('screen-auth').classList.remove('active');
+            document.getElementById('app-main').classList.remove('hidden');
+            document.getElementById('user-name').textContent = name;
+            startRealtimeListeners();
+        };
+
+        window.navigateTo = function(page) {
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('nav-' + page).classList.add('active');
+            
+            ['home', 'groups', 'history', 'stats'].forEach(p => { 
+                const el = document.getElementById('page-' + p);
+                el.classList.add('hidden'); el.classList.remove('active');
+            });
+            
+            const targetPage = document.getElementById('page-' + page);
+            targetPage.classList.remove('hidden'); targetPage.classList.add('active');
+            
+            updateAllUI();
+            if (page === 'groups') renderGroups();
+            window.scrollTo(0, 0);
+        };
+
+        window.toggleTheme = function() {
+            window.state.theme = window.state.theme === 'dark' ? 'light' : 'dark';
+            if (window.state.theme === 'dark') applyDarkThemeUI(); else applyLightThemeUI();
+            localStorage.setItem('ecotrack_theme', window.state.theme);
+            updateAllUI(); // Refresh charts
+        };
+        
+        function applyDarkThemeUI(){ document.body.setAttribute('data-theme', 'dark'); document.getElementById('toggle-theme')?.classList.add('active'); }
+        function applyLightThemeUI(){ document.body.removeAttribute('data-theme'); document.getElementById('toggle-theme')?.classList.remove('active'); }
+        window.openSettings = function() { document.getElementById('modal-settings').classList.add('active'); };
+        window.closeSettings = function() { document.getElementById('modal-settings').classList.remove('active'); };
+        
+        window.clearData = async function() { 
+            if (confirm('¿Borrar TODOS tus registros de la nube? Esto no se puede deshacer.')) { 
+                if(!currentUser) return;
+                const entriesRef = collection(db, 'artifacts', appId, 'users', currentUser.uid, 'entries');
+                const snap = await getDocs(entriesRef);
+                snap.forEach(d => deleteDoc(d.ref));
+                alert('Tus datos han sido borrados de la nube.');
+                window.closeSettings();
+            } 
+        };
+
+        window.previewPhoto = function(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    const img = document.getElementById('photo-preview');
+                    img.src = e.target.result; img.style.display = 'block';
+                    alert("Foto adjuntada (Solo se visualizará localmente por límites de almacenamiento en BD)");
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        };
+
+        // DATOS MAMONES Y CALCULO
+        function generateImpactMessage(cat, subName, amt, impactVal) {
+            let msg = ''; let colateral = '';
+            if (cat === 'comida') {
+                msg = `Impacto de producción: ${impactVal} L de Agua Virtual y GEI asociadas.`;
+                if(subName.includes('Carne')) colateral = `Daño colateral: Deforestación y metano bovino (25x más calor que CO2).`;
+                else if(subName.includes('Pizza')) colateral = `Daño colateral: Industria de ultraprocesados y monocultivos intensivos.`;
+                else colateral = `Daño colateral: Uso de agroquímicos y eutrofización de cuerpos de agua.`;
+            } 
+            else if (cat === 'agua') {
+                msg = `Extracción/Vertido: ${impactVal} L afectados de la red hidráulica.`;
+                if(subName.includes('Sanitario')) colateral = `Daño colateral: Dificulta severamente el tratamiento en plantas residuales.`;
+                else if(subName === 'Ducha') colateral = `Daño colateral: Bombear agua a ciudades consume inmensas cantidades de electricidad.`;
+                else colateral = `Daño colateral: Sobreexplotación que provoca hundimientos del subsuelo.`;
+            }
+            else if (cat === 'transporte') {
+                msg = `Emisiones estimadas: ${impactVal} kg de GEI y material particulado.`;
+                if(subName.includes('Camión')) colateral = `Daño colateral: PM2.5 directo a pulmones, agravando asma.`;
+                else if(subName.includes('Metro')) colateral = `Impacto Positivo: Usar colectivo redujo drásticamente la huella.`;
+                else colateral = `Daño colateral: Emisión de NOx que genera smog fotoquímico.`;
+            }
+            else if (cat === 'ia') {
+                msg = `Consumo Datacenter: ${impactVal} kg CO2eq procesados por LLMs.`;
+                if(subName.includes('Imágenes')) colateral = `Daño colateral: Generar IA usa GPUs requiriendo agua potable para refrigeración.`;
+                else colateral = `Daño colateral: Alto estrés energético en servidores 24/7.`;
+            }
+            else if (cat === 'residuos') {
+                msg = `Generación: ${impactVal} kg de residuos sólidos urbanos.`;
+                if(subName.includes('Plástico')) colateral = `Daño colateral: Fotodegradación en microplásticos.`;
+                else colateral = `Daño colateral: Lixiviados tóxicos y generación de gas Metano en basureros.`;
+            }
+            else { msg = `Impacto General: ${impactVal} unidades estándar ambientales.`; }
+            return `<div class="impact-msg"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg><div>${msg}<br><span class="colateral-msg">${colateral}</span></div></div>`;
+        }
+
+        function calculateLiveImpact() {
+            const amt = parseFloat(document.getElementById('entry-amt').value) || 0;
+            const subName = document.getElementById('entry-sub').value;
+            const cat = window.state.currentCat;
+            if(!cat || !subName || amt <= 0) { document.getElementById('entry-carbon-override').value = ''; return; }
+            
+            const c = cats[cat];
+            let factor = typeof c.factor === 'object' ? (c.factor[subName] || c.factor['Otro'] || 1) : c.factor;
+            let val = factor * amt;
+            if (cat === 'comida') { window.state.chatarra.forEach(i => val += 500); }
+            
+            document.getElementById('entry-carbon-override').value = (Math.round(val * 1000) / 1000);
+        }
+
+        window.updateUnitsHelper = function() {
+            const c = cats[window.state.currentCat];
+            if(c) {
+                document.getElementById('amt-label').textContent = `Cantidad (${c.unit})`;
+                document.getElementById('override-label').innerHTML = `💡 Impacto (${c.impUnit}) <small style="font-weight:normal;">[Editable]</small>`;
+                document.getElementById('amt-helper').textContent = c.hint || '';
+            }
+            calculateLiveImpact();
+        };
+
+        window.openEntry = function(cat) {
+            window.state.currentCat = cat; const c = cats[cat];
+            document.getElementById('entry-title').innerHTML = `${c.icon} Registrar ${c.label}`;
+            
+            const tzoffset = (new Date()).getTimezoneOffset() * 60000;
+            const localISOTime = (new Date(Date.now() - tzoffset)).toISOString().slice(0, 16);
+            document.getElementById('entry-date').value = localISOTime.split('T')[0];
+            document.getElementById('entry-time').value = localISOTime.split('T')[1];
+            
+            document.getElementById('entry-sub').innerHTML = '<option value="">Selecciona la subcategoría...</option>' + c.subs.map(s => `<option value="${s}">${s}</option>`).join('');
+            document.getElementById('chatarra-box').classList.toggle('active', !!c.hasChatarra);
+            
+            document.getElementById('entry-amt').value = ''; document.getElementById('entry-carbon-override').value = ''; document.getElementById('entry-note').value = '';
+            document.getElementById('photo-preview').style.display = 'none'; document.getElementById('photo-preview').src = '';
+            
+            window.state.chatarra = []; document.querySelectorAll('#chatarra-box .chip').forEach(ch => ch.classList.remove('active-chatarra'));
+            window.setPrivacy('public'); window.updateUnitsHelper();
+            document.getElementById('modal-entry').classList.add('active');
+        };
+
+        window.closeEntry = function() { document.getElementById('modal-entry').classList.remove('active'); };
+        
+        window.toggleChatarra = function(chipElement, item) {
+            if (chipElement.classList.contains('active-chatarra')) { chipElement.classList.remove('active-chatarra'); window.state.chatarra = window.state.chatarra.filter(i => i !== item); }
+            else { chipElement.classList.add('active-chatarra'); window.state.chatarra.push(item); }
+            calculateLiveImpact(); 
+        };
+        
+        window.setPrivacy = function(p) { window.state.privacy = p; document.querySelectorAll('.priv-btn').forEach(b => b.classList.remove('active')); document.getElementById('btn-' + (p === 'public' ? 'pub' : p === 'friends' ? 'friend' : 'priv')).classList.add('active'); };
+
+        window.saveEntry = async function() {
+            if(!currentUser) return;
+            const amt = parseFloat(document.getElementById('entry-amt').value);
+            const subName = document.getElementById('entry-sub').value;
+            const dateVal = document.getElementById('entry-date').value;
+            const timeVal = document.getElementById('entry-time').value;
+            
+            if (!amt || amt <= 0 || !subName || !dateVal || !timeVal) { alert('Completa los datos requeridos.'); return; }
+            
+            let impactVal = parseFloat(document.getElementById('entry-carbon-override').value);
+            if(isNaN(impactVal) || impactVal < 0) { calculateLiveImpact(); impactVal = parseFloat(document.getElementById('entry-carbon-override').value) || 0; }
+            
+            const c = cats[window.state.currentCat];
+            const impactMessage = generateImpactMessage(window.state.currentCat, subName, amt, impactVal);
+
+            const newEntry = {
+                cat: window.state.currentCat, catLabel: c.label, subName: subName, amt, unit: c.unit,
+                note: document.getElementById('entry-note').value.trim(), privacy: window.state.privacy, chatarra: [...window.state.chatarra],
+                impactVal: impactVal, impactUnit: c.impUnit, impactMsgHTML: impactMessage,
+                timestamp: new Date(`${dateVal}T${timeVal}`).getTime(),
+                dateStr: new Date(`${dateVal}T${timeVal}`).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' }),
+                timeStr: new Date(`${dateVal}T${timeVal}`).toLocaleTimeString('es-ES', {hour: '2-digit', minute:'2-digit'})
+            };
+            
+            // Subir a Firebase
+            const entriesRef = collection(db, 'artifacts', appId, 'users', currentUser.uid, 'entries');
+            await addDoc(entriesRef, newEntry);
+            window.closeEntry();
+            // onSnapshot update UI automáticamente
+        };
+        
+        window.deleteEntry = async function(dbId) {
+            if(!currentUser) return;
+            if(confirm('¿Eliminar este registro de forma permanente en la nube?')) {
+                await deleteDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'entries', dbId));
+                // onSnapshot update UI automáticamente
+            }
+        };
+
+        // SISTEMA DE GRUPOS (MULTIJUGADOR REAL CLOUD)
+        window.renderGroups = function() {
+            const container = document.getElementById('groups-container');
+            if(window.state.groups.length === 0) {
+                container.innerHTML = `<div class="empty-state card"><div style="font-size: 3rem; margin-bottom: 16px;">👥</div><h3 style="margin-bottom: 8px;">Sin Redes</h3><p>Únete o crea un grupo en la nube.</p></div>`; return;
+            }
+            container.innerHTML = window.state.groups.map(g => `
+                <div class="card" style="border-left: 4px solid var(--sage);">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                        <div>
+                            <h3 style="margin-bottom:4px;">${g.name}</h3>
+                            <p style="font-family:monospace; color:var(--accent); font-weight:bold; cursor:pointer;" onclick="copyCode('${g.code}')">Código: ${g.code} 📋</p>
+                            <p style="font-size:0.85rem; color:var(--muted); margin-top:4px;">👥 ${g.members.length} miembros activos</p>
+                        </div>
+                        <button onclick="alert('🔔 ¡Zumbido enviado a la red ${g.name}!')" style="background:var(--accent); color:white; border:none; border-radius:50%; width:40px; height:40px; cursor:pointer; font-size:1.2rem;" title="Enviar zumbido (nudge)">👉</button>
+                    </div>
+                </div>
+            `).join('');
+        };
+
+        window.createGroup = async function() {
+            if(!currentUser) return;
+            const name = prompt('Nombra tu nueva red de Ingeniería Ambiental:');
+            if (!name) return;
+            const code = Math.random().toString(36).substr(2, 6).toUpperCase();
+            
+            const newGroup = { name: name, code: code, admin: currentUser.uid, members: [currentUser.uid] };
+            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'groups', code), newGroup);
+            alert(`¡Red creada en la nube! Código de acceso: ${code}`);
+        };
+
+        window.joinGroup = async function() {
+            if(!currentUser) return;
+            const code = prompt('Ingresa el código de 6 dígitos del grupo:');
+            if (!code) return;
+            const cleanCode = code.toUpperCase().trim();
+            
+            const gRef = doc(db, 'artifacts', appId, 'public', 'data', 'groups', cleanCode);
+            const gSnap = await getDoc(gRef);
+            
+            if(gSnap.exists()) {
+                const gData = gSnap.data();
+                if(!gData.members.includes(currentUser.uid)) {
+                    gData.members.push(currentUser.uid);
+                    await setDoc(gRef, gData); // Actualiza Firestore
+                    alert('¡Te has unido exitosamente a la red!');
+                } else {
+                    alert('Ya perteneces a esta red.');
+                }
+            } else {
+                alert('El código ingresado no existe en la nube.');
+            }
+        };
+        window.copyCode = function(code) { navigator.clipboard?.writeText(code).then(() => alert('Código copiado: ' + code)); };
+
+        // EXPORTACIÓN PROFESIONAL
+        window.exportData = function(type) {
+            if (window.state.entries.length === 0) { alert('No hay datos suficientes.'); return; }
+            const ts = new Date().toISOString().split('T')[0];
+            if (type === 'excel') {
+                const wsData = window.state.entries.map(e => ({ 'Fecha': e.dateStr, 'Hora': e.timeStr, 'Categoría': e.catLabel.toUpperCase(), 'Subcategoría': e.subName, 'Cant.': e.amt, 'Unidad': e.unit, 'Impacto Generado': `${e.impactVal} ${e.impactUnit}`, 'Notas': e.note }));
+                const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(wsData), "Bitácora Nube"); XLSX.writeFile(wb, `EcoTrack_Cloud_${ts}.xlsx`);
+            } 
+            else if (type === 'pdf') {
+                const { jsPDF } = window.jspdf; const doc = new jsPDF('p', 'pt');
+                doc.setFontSize(14); doc.text("Reporte Ingeniería Ambiental - EcoTrack Pro Cloud", 40, 40); doc.setFontSize(10); doc.text(`Usuario: ${window.state.user.name} | Fecha: ${ts}`, 40, 60);
+                const tableRows = window.state.entries.map(e => [ `${e.dateStr} ${e.timeStr}`, `${e.catLabel} (${e.subName})`, `${e.amt} ${e.unit}`, `${e.impactVal} ${e.impactUnit}` ]);
+                doc.autoTable({ head: [["Fecha", "Categoría", "Cant.", "Impacto"]], body: tableRows, startY: 80, styles: { fontSize: 8 } }); doc.save(`EcoTrack_Cloud_${ts}.pdf`);
+            }
+            else if (type === 'csv') {
+                const csv = 'Fecha,Hora,Categoría,Subcategoría,Cantidad,Unidad,Impacto,Unidad_Impacto,Notas\n' + window.state.entries.map(e => `"${e.dateStr}","${e.timeStr}","${e.catLabel}","${e.subName}",${e.amt},"${e.unit}",${e.impactVal},"${e.impactUnit}","${e.note}"`).join('\n'); download(csv, `ecotrack_cloud_${ts}.csv`, 'text/csv');
+            } else if (type === 'json') { download(JSON.stringify(window.state.entries, null, 2), `ecotrack_cloud_${ts}.json`, 'application/json'); }
+        };
+        function download(content, filename, type) { const blob = new Blob([content], { type }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = filename; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url); }
+
+        // DISPLAYS & RENDER
+        function updateHomeStats() {
+            const todayStr = new Date().toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' });
+            const list = window.state.entries.filter(e => e.dateStr === todayStr);
+            
+            let co2 = 0; let agua = 0; let res = 0;
+            list.forEach(e => {
+                if(e.cat === 'energia' || e.cat === 'transporte' || e.cat === 'digital' || e.cat === 'ia') co2 += e.impactVal;
+                if(e.cat === 'agua') agua += e.impactVal;
+                if(e.cat === 'residuos') res += e.impactVal;
+            });
+
+            document.getElementById('stat-entries').textContent = list.length;
+            document.getElementById('stat-emisiones').textContent = co2.toFixed(1);
+            document.getElementById('stat-agua').textContent = agua.toFixed(1);
+            document.getElementById('stat-residuos').textContent = res.toFixed(1);
+        }
+
+        function checkAchievements() {
+            const hasAgua = window.state.entries.some(e => e.cat === 'agua');
+            const hasIa = window.state.entries.some(e => e.cat === 'ia');
+            
+            const elAgua = document.getElementById('achieve-agua');
+            const elIa = document.getElementById('achieve-ia');
+            
+            if(hasAgua && elAgua) { elAgua.style.opacity = "1"; elAgua.style.background = "rgba(95,201,168,0.1)"; elAgua.innerHTML = `<div style="font-size: 2rem; margin-bottom: 8px;">💧</div><div style="font-weight: 700; color: var(--sage);">Guardián Hídrico</div><div style="font-size: 0.85rem; color: var(--muted);">Desbloqueado</div>`; }
+            if(hasIa && elIa) { elIa.style.opacity = "1"; elIa.style.background = "rgba(95,201,168,0.1)"; elIa.innerHTML = `<div style="font-size: 2rem; margin-bottom: 8px;">🤖</div><div style="font-weight: 700; color: var(--sage);">Consciencia Artificial</div><div style="font-size: 0.85rem; color: var(--muted);">Desbloqueado</div>`; }
+        }
+
+        function updateTimelineList(containerId, entriesArr) {
+            const box = document.getElementById(containerId);
+            if (entriesArr.length === 0) { box.innerHTML = `<div class="empty-state"><div style="font-size:3rem; margin-bottom:16px; opacity:0.3;">🌱</div><p>No hay registros en la nube. ¡A medir!</p></div>`; return; }
+            box.innerHTML = entriesArr.map(e => `
+                <div class="entry">
+                    <button class="delete-btn" onclick="deleteEntry('${e.dbId}')" title="Eliminar de Nube">✕</button>
+                    <div class="entry-header">
+                        <span class="entry-cat">${cats[e.cat]?.icon || ''} <span style="margin-top:2px;">${e.catLabel} - ${e.subName}</span></span>
+                        <span class="entry-amt">${e.amt} <span style="font-size:0.8rem; font-weight:normal;">${e.unit}</span></span>
+                    </div>
+                    <div class="entry-date">${e.dateStr} a las ${e.timeStr} • Impacto: <strong>${e.impactVal} ${e.impactUnit}</strong></div>
+                    ${e.impactMsgHTML || ''}
+                    ${e.note ? `<div class="entry-note">"${e.note}"</div>` : ''}
+                </div>`).join('');
+        }
+
+        function updateStatsPage() {
+            document.getElementById('total-entries').textContent = window.state.entries.length;
+            let co2 = 0; window.state.entries.forEach(e => { if(e.cat === 'energia' || e.cat === 'transporte' || e.cat === 'digital' || e.cat === 'ia') co2 += e.impactVal; });
+            document.getElementById('total-carbon').textContent = co2.toFixed(1);
+            document.getElementById('streak-days').textContent = new Set(window.state.entries.map(e => e.dateStr)).size || 0;
+            checkAchievements();
+        }
+
+        function getChartColors() { const isDark = window.state.theme === 'dark'; return { text: isDark ? '#e8f5f0' : '#0d3328', grid: isDark ? 'rgba(168, 230, 207, 0.1)' : 'rgba(13, 51, 40, 0.1)', line: isDark ? '#7dd3c0' : '#2d8a6e' }; }
+        function initCharts() { }
+
+        function updateHistoryChart() {
+            const ctx = document.getElementById('history-chart'); if(!ctx) return;
+            const last7Days = []; for(let i=6; i>=0; i--) { const d = new Date(); d.setDate(d.getDate() - i); last7Days.push(d.toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' })); }
+            const dataMap = {}; last7Days.forEach(d => dataMap[d] = 0);
+            window.state.entries.forEach(e => { if(dataMap[e.dateStr] !== undefined && (e.cat === 'energia' || e.cat === 'transporte' || e.cat === 'digital' || e.cat === 'ia')) dataMap[e.dateStr] += e.impactVal; });
+            const cColors = getChartColors();
+            if (chartHistoryObj) chartHistoryObj.destroy();
+            chartHistoryObj = new Chart(ctx, {
+                type: 'line', data: { labels: last7Days.map(d => d.slice(0,5)), datasets: [{ label: 'Emisiones GEI (kg)', data: Object.values(dataMap), borderColor: cColors.line, backgroundColor: cColors.line + '33', tension: 0.4, fill: true, pointRadius: 4 }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: cColors.grid }, ticks: { color: cColors.text } }, x: { grid: { display: false }, ticks: { color: cColors.text } } } }
+            });
+        }
+
+        function updateStatsChart() {
+            const ctx = document.getElementById('stats-chart'); if(!ctx) return;
+            const catSums = {}; Object.keys(cats).forEach(k => catSums[k] = 0);
+            window.state.entries.forEach(e => { catSums[e.cat] += 1; }); // Cuenta de Eventos en lugar de sumas relativas imposibles
+            
+            const labels = []; const data = []; const bgColors = ['#5fc9a8', '#2d8a6e', '#e85d4e', '#e9c46a', '#4ecdc4', '#ff6b6b', '#1a535c', '#ffe66d'];
+            Object.keys(catSums).forEach(cat => { if(catSums[cat] > 0) { labels.push(cats[cat].label); data.push(catSums[cat]); } });
+            if(data.length === 0) { labels.push('Sin datos'); data.push(1); }
+            const cColors = getChartColors();
+            if (chartStatsObj) chartStatsObj.destroy();
+            chartStatsObj = new Chart(ctx, {
+                type: 'doughnut', data: { labels: labels, datasets: [{ data: data, backgroundColor: bgColors, borderWidth: 0 }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: cColors.text, padding: 20, font: {family: 'Outfit'} } } }, cutout: '65%' }
+            });
+        }
+    </script>
+</body>
+</html>
